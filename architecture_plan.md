@@ -30,6 +30,7 @@ A modern, scalable, microservice-based e-commerce platform for selling vests wit
 | Language | **TypeScript** | Type safety and consistency |
 | Styling | **TailwindCSS + ShadCN/UI** | Modern, responsive UI framework |
 | State Management | **Zustand / Redux Toolkit** | Scalable and predictable global state |
+| Data Fetching | **React Query (TanStack Query)** | Server state management and caching |
 | Form Handling | **React Hook Form + Zod** | Schema validation with type inference |
 | Animations | **Framer Motion** | Smooth page transitions |
 | SEO | **Next SEO** | Manage OpenGraph and meta data |
