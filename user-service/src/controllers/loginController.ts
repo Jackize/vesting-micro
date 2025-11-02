@@ -1,31 +1,37 @@
-import { Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
-import User from '../models/User';
-import { CustomError } from '../middleware/errorHandler';
-import { generateToken } from '../utils/jwt';
+import { CustomError } from "@vestify/shared";
+import { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
+import User from "../models/User";
+import { generateToken } from "../utils/jwt";
 
 // @desc    Login user
 // @route   POST /api/users/login
 // @access  Public
-export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+export const loginUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { email, password } = req.body;
 
   // Find user and include password field
-  const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+  const user = await User.findOne({ email: email.toLowerCase() }).select(
+    "+password",
+  );
 
   if (!user) {
-    throw new CustomError('Invalid email or password', 401);
+    throw new CustomError("Invalid email or password", 401);
   }
 
   // Check if user is active
   if (!user.isActive) {
-    throw new CustomError('Account has been deactivated', 403);
+    throw new CustomError("Account has been deactivated", 403);
   }
 
   // Check password
   const isPasswordValid = await user.comparePassword(password);
   if (!isPasswordValid) {
-    throw new CustomError('Invalid email or password', 401);
+    throw new CustomError("Invalid email or password", 401);
   }
 
   // Update last login
@@ -33,11 +39,15 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   await user.save();
 
   // Generate token
-  const token = generateToken((user._id as mongoose.Types.ObjectId).toString());
+  const token = generateToken(
+    (user._id as mongoose.Types.ObjectId).toString(),
+    user.role,
+    user.isActive,
+  );
 
   res.json({
     success: true,
-    message: 'Login successful',
+    message: "Login successful",
     data: {
       user: {
         id: user._id,
@@ -52,4 +62,3 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     },
   });
 };
-

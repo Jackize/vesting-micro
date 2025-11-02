@@ -1,19 +1,23 @@
-import { Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
-import User from '../models/User';
-import { CustomError } from '../middleware/errorHandler';
-import { generateToken } from '../utils/jwt';
+import { CustomError } from "@vestify/shared";
+import { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
+import User from "../models/User";
+import { generateToken } from "../utils/jwt";
 
 // @desc    Register a new user
 // @route   POST /api/users/register
 // @access  Public
-export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
+export const registerUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { email, password, firstName, lastName, phone } = req.body;
 
   // Check if user already exists
   const existingUser = await User.findByEmail(email);
   if (existingUser) {
-    throw new CustomError('User with this email already exists', 400);
+    throw new CustomError("User with this email already exists", 400);
   }
 
   // Create new user
@@ -26,11 +30,15 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
   });
 
   // Generate token
-  const token = generateToken((user._id as mongoose.Types.ObjectId).toString());
+  const token = generateToken(
+    (user._id as mongoose.Types.ObjectId).toString(),
+    user.role,
+    user.isActive,
+  );
 
   res.status(201).json({
     success: true,
-    message: 'User registered successfully',
+    message: "User registered successfully",
     data: {
       user: {
         id: user._id,
@@ -44,4 +52,3 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     },
   });
 };
-

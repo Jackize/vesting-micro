@@ -1,27 +1,43 @@
-import { Router } from 'express';
-import { registerUser } from '../controllers/registerController';
-import { loginUser } from '../controllers/loginController';
-import { getCurrentUser, updateUserProfile } from '../controllers/profileController';
-import { getUserById, getAllUsers, deleteUser } from '../controllers/userController';
-import { protect, authorize } from '../middleware/auth';
-import { validateRegister, validateLogin, validateUpdateProfile } from '../middleware/validator';
+import { currentUser, requireAuth, requireRole } from "@vestify/shared";
+import { Router } from "express";
+import { loginUser } from "../controllers/loginController";
+import {
+  getCurrentUser,
+  updateUserProfile,
+} from "../controllers/profileController";
+import { registerUser } from "../controllers/registerController";
+import {
+  deleteUser,
+  getAllUsers,
+  getUserById,
+} from "../controllers/userController";
+import {
+  validateLogin,
+  validateRegister,
+  validateUpdateProfile,
+} from "../middleware/validator";
 
 const router = Router();
 
 // Public routes
-router.post('/register', validateRegister, registerUser);
-router.post('/login', validateLogin, loginUser);
+router.post("/register", validateRegister, registerUser);
+router.post("/login", validateLogin, loginUser);
 
 // Protected routes (require authentication)
-router.get('/me', protect, getCurrentUser);
-router.put('/me', protect, validateUpdateProfile, updateUserProfile);
+router.get("/me", currentUser, requireAuth, getCurrentUser);
+router.put(
+  "/me",
+  currentUser,
+  requireAuth,
+  validateUpdateProfile,
+  updateUserProfile,
+);
 
 // User routes
-router.get('/:id', protect, getUserById);
+router.get("/:id", currentUser, requireAuth, getUserById);
 
 // Admin routes
-router.get('/', protect, authorize('admin', 'moderator'), getAllUsers);
-router.delete('/:id', protect, authorize('admin'), deleteUser);
+router.get("/", currentUser, requireRole("admin", "moderator"), getAllUsers);
+router.delete("/:id", currentUser, requireRole("admin"), deleteUser);
 
 export default router;
-
