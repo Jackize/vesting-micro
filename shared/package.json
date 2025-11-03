@@ -1,15 +1,17 @@
 {
   "name": "@vestify/shared",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Shared utilities, middleware, and common modules for Vestify microservices",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "eslint src --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "build": "npm run clean && tsc",
+    "clean": "rm -rf ./dist",
+    "pub": "npm version patch && npm run build && npm publish"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "keywords": [
     "shared",
     "middleware",
@@ -36,5 +38,8 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -29,7 +29,7 @@ apiClient.interceptors.request.use(
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<{ success?: boolean; error?: string }>) => {
+  (error: AxiosError<{ success?: boolean; message?: string; error?: string }>) => {
     // Only redirect on 401 for protected routes, not for login/register
     if (error.response?.status === 401) {
       const requestUrl = error.config?.url || '';

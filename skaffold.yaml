@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: vestify-dev
+manifests:
+  rawYaml:
+    - ./infra/k8s/*
+build:
+  local:
+    push: false
+    useDockerCLI: true
+    tryImportMissing: true
+  artifacts:
+    - image: user-service
+      context: ./user-service
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*"
+            dest: /app/src
+    - image: client
+      context: ./frontend
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "**/*"
+            dest: /app
+

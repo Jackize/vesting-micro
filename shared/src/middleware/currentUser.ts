@@ -43,7 +43,7 @@ export const currentUser = (
     // Verify token
     const secret = process.env.JWT_SECRET || "fallback-secret";
     const decoded = jwt.verify(token, secret) as JWTPayload;
-    console.log("decoded", decoded);
+
     // Attach payload to request
     req.currentUser = decoded;
     next();

@@ -1,5 +1,5 @@
 import { currentUser, requireAuth, requireRole } from "@vestify/shared";
-import { Router } from "express";
+import express, { Router } from "express";
 import { loginUser } from "../controllers/loginController";
 import {
   getCurrentUser,
@@ -17,7 +17,7 @@ import {
   validateUpdateProfile,
 } from "../middleware/validator";
 
-const router = Router();
+const router: Router = express.Router();
 
 // Public routes
 router.post("/register", validateRegister, registerUser);
