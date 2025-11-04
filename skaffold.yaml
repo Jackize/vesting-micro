@@ -19,6 +19,14 @@ build:
         manual:
           - src: "src/**/*"
             dest: /app/src
+    - image: product-service
+      context: ./product-service
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*"
+            dest: /app/src
     - image: client
       context: ./frontend
       docker:

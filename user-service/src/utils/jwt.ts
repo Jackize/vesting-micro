@@ -12,9 +12,9 @@ export const generateToken = (
   role: string,
   status: boolean,
 ): string => {
-  const secret = process.env.JWT_SECRET || "fallback-secret";
-  const expiresIn = process.env.JWT_EXPIRES_IN || "7d";
-  return jwt.sign({ userId, role, status }, secret, {
+  const secret = process.env.JWT_SECRET;
+  const expiresIn = process.env.JWT_EXPIRES_IN;
+  return jwt.sign({ userId, role, status }, secret!, {
     expiresIn,
   } as jwt.SignOptions);
 };

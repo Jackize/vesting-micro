@@ -1,5 +1,6 @@
 import app from "./app";
 import database from "./config/database";
+import { seedProductsIfEmpty } from "./scripts/autoSeed";
 
 // Connect to database and start server
 const startServer = async (): Promise<void> => {
@@ -10,12 +11,6 @@ const startServer = async (): Promise<void> => {
     if (!process.env.MONGODB_DB_NAME) {
       throw new Error("MONGODB_DB_NAME is not set");
     }
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is not set");
-    }
-    if (!process.env.JWT_EXPIRES_IN) {
-      throw new Error("JWT_EXPIRES_IN is not set");
-    }
     if (!process.env.PORT) {
       throw new Error("PORT is not set");
     }
@@ -25,10 +20,16 @@ const startServer = async (): Promise<void> => {
     // Connect to MongoDB
     await database.connect();
 
+    // Auto-seed products in development mode if database is empty
+    console.log("Seeding products...");
+    if (process.env.NODE_ENV === "development") {
+      await seedProductsIfEmpty();
+    }
+
     // Start server
     const server = app.listen(process.env.PORT, () => {
       console.log(`
-        🚀 User Service is running!
+        🚀 Product Service is running!
         📍 Port: ${process.env.PORT}
         🌍 Environment: ${process.env.NODE_ENV}
         🕐 Time: ${new Date().toISOString()}
