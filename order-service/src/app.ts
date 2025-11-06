@@ -4,19 +4,20 @@ import dotenv from "dotenv";
 import express, { Application } from "express";
 import "express-async-errors";
 import helmet from "helmet";
-import productRoutes from "./routes/productRoutes";
+import orderRoutes from "./routes/orderRoutes";
 
 // Load environment variables
 dotenv.config();
 
 const app: Application = express();
+const NODE_ENV = process.env.NODE_ENV;
 
 // Security middleware
 app.use(helmet());
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+  origin: process.env.CORS_ORIGIN,
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -27,28 +28,28 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint (at root level)
+// Health check endpoint
 app.get("/health", (req, res) => {
   res.json({
     success: true,
-    message: "Product Service is running",
+    message: "Order Service is running",
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development",
+    environment: NODE_ENV,
   });
 });
 
 // API routes
-app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "Product Service API",
+    message: "Order Service API",
     version: "1.0.0",
     endpoints: {
       health: "/health",
-      products: "/api/products",
+      orders: "/api/orders",
     },
   });
 });
