@@ -1,0 +1,28 @@
+{
+    "name": "rabbitmq-test",
+    "version": "1.0.0",
+    "description": "RabbitMQ test scripts for producer and consumer",
+    "main": "index.js",
+    "scripts": {
+        "produce": "ts-node --transpile-only src/producer.ts",
+        "consume": "ts-node --transpile-only src/consumer.ts",
+        "consume:1": "ts-node --transpile-only src/consumer.ts worker1",
+        "consume:2": "ts-node --transpile-only src/consumer.ts worker2"
+    },
+    "keywords": [
+        "rabbitmq",
+        "test",
+        "message-queue"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "amqplib": "^0.10.3"
+    },
+    "devDependencies": {
+        "@types/amqplib": "^0.10.4",
+        "@types/node": "^20.10.5",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    }
+}
