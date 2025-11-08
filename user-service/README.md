@@ -53,6 +53,38 @@ JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-in-production
 JWT_REFRESH_EXPIRES_IN=30d
 
 CORS_ORIGIN=http://localhost:3000
+
+# Default Admin User (optional - only used if no admin users exist)
+DEFAULT_ADMIN_EMAIL=admin@vestify.com
+DEFAULT_ADMIN_PASSWORD=Admin123!
+DEFAULT_ADMIN_FIRST_NAME=Admin
+DEFAULT_ADMIN_LAST_NAME=User
+DEFAULT_ADMIN_PHONE=+1234567890
+```
+
+### Default Admin User
+
+On first startup, if no admin users exist in the database, the service will automatically create a default admin user with the following credentials:
+
+- **Email**: `admin@vestify.com` (configurable via `DEFAULT_ADMIN_EMAIL`)
+- **Password**: `Admin123!` (configurable via `DEFAULT_ADMIN_PASSWORD`)
+- **Role**: `admin`
+- **Name**: Admin User (configurable via `DEFAULT_ADMIN_FIRST_NAME` and `DEFAULT_ADMIN_LAST_NAME`)
+
+**⚠️ Important Security Notes:**
+
+1. **Change the default password immediately** after first login in production
+2. The default admin is only created if no admin users exist
+3. If a user with the default email already exists, their role will be updated to admin
+4. All default admin settings are optional and have sensible defaults
+
+**Example:**
+```bash
+# Custom default admin
+DEFAULT_ADMIN_EMAIL=admin@mycompany.com
+DEFAULT_ADMIN_PASSWORD=YourSecurePassword123!
+DEFAULT_ADMIN_FIRST_NAME=System
+DEFAULT_ADMIN_LAST_NAME=Administrator
 ```
 
 ## Development
@@ -205,6 +237,8 @@ user-service/
 │   │   └── User.ts              # User Mongoose model
 │   ├── routes/
 │   │   └── userRoutes.ts        # User routes
+│   ├── scripts/
+│   │   └── seedDefaultAdmin.ts  # Default admin user seeding
 │   └── server.ts                # Express app & server
 ├── dist/                         # Compiled JavaScript (build output)
 ├── Dockerfile                    # Docker configuration

@@ -1,5 +1,6 @@
 import app from "./app";
 import database from "./config/database";
+import { seedDefaultAdmin } from "./scripts/seedDefaultAdmin";
 
 // Connect to database and start server
 const startServer = async (): Promise<void> => {
@@ -24,6 +25,9 @@ const startServer = async (): Promise<void> => {
     }
     // Connect to MongoDB
     await database.connect();
+
+    // Seed default admin user if no admin users exist
+    await seedDefaultAdmin();
 
     // Start server
     const server = app.listen(process.env.PORT, () => {
