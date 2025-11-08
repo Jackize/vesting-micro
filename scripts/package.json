@@ -1,0 +1,24 @@
+{
+  "name": "vestify-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for Vestify platform",
+  "main": "index.js",
+  "scripts": {
+    "seed:products": "ts-node seed-products.ts"
+  },
+  "keywords": [
+    "vestify",
+    "scripts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
