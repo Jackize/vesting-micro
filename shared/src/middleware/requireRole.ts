@@ -14,7 +14,6 @@ export const requireRole = (...roles: string[]) => {
     if (!req.currentUser) {
       throw new CustomError("Not authorized, user not found in request", 401);
     }
-    console.log(req.currentUser);
     // Check if role exists in token payload
     if (!req.currentUser.role) {
       throw new CustomError("Role not found in token", 403);
