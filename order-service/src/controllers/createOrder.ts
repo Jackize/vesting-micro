@@ -1,4 +1,4 @@
-import { CustomError } from "@vestify/shared";
+import { CustomError, ProductStatus } from "@vestify/shared";
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { OrderCreatedPublisher } from "../events/publishers/order-created-publisher";
@@ -20,82 +20,7 @@ export const createOrder = async (
     req.body;
 
   // Validate products and stock availability
-  const validationErrors: string[] = [];
-  const productIds = items.map((item: any) => item.productId);
-
-  // Fetch all products in parallel
-  const products = await Product.find({ productId: { $in: productIds } });
-
-  // Create a map for quick lookup
-  const productMap = new Map(products.map((p) => [p.productId, p]));
-
-  // Validate each item
-  for (const item of items) {
-    const product = productMap.get(item.productId);
-
-    // Check if product exists
-    if (!product) {
-      validationErrors.push(
-        `Product "${item.productName}" (ID: ${item.productId}) not found`,
-      );
-      continue;
-    }
-
-    // Check product status
-    if (product.status !== "active") {
-      validationErrors.push(
-        `Product "${item.productName}" is not available (status: ${product.status})`,
-      );
-      continue;
-    }
-
-    // Check stock availability
-    if (item.variantId) {
-      // Validate variant-based product
-      const variantIndex = parseInt(item.variantId, 10);
-      if (
-        isNaN(variantIndex) ||
-        variantIndex < 0 ||
-        variantIndex >= product.variants.length
-      ) {
-        validationErrors.push(
-          `Invalid variant for product "${item.productName}"`,
-        );
-        continue;
-      }
-
-      const variant = product.variants[variantIndex];
-      if (variant.stock < item.quantity) {
-        validationErrors.push(
-          `Insufficient stock for "${item.productName}" - ${item.variantName}. Available: ${variant.stock}, Requested: ${item.quantity}`,
-        );
-        continue;
-      }
-    } else {
-      // Validate product without variant
-      if (product.variants && product.variants.length > 0) {
-        validationErrors.push(
-          `Product "${item.productName}" has variants but no variant was specified`,
-        );
-        continue;
-      }
-
-      if (product.stock < item.quantity) {
-        validationErrors.push(
-          `Insufficient stock for "${item.productName}". Available: ${product.stock}, Requested: ${item.quantity}`,
-        );
-        continue;
-      }
-    }
-  }
-
-  // If validation errors exist, return error
-  if (validationErrors.length > 0) {
-    throw new CustomError(
-      `Order validation failed: ${validationErrors.join("; ")}`,
-      400,
-    );
-  }
+  await validateProducts(items);
 
   // Calculate subtotal
   const subtotal = items.reduce(
@@ -151,4 +76,79 @@ export const createOrder = async (
       },
     },
   });
+};
+
+const validateProducts = async (items: any[]) => {
+  const validationErrors: string[] = [];
+  // get product ids from items
+  const productIds = items.map((item: any) => item.productId);
+  // find products by product ids
+  const products = await Product.find({ productId: { $in: productIds } });
+  // create a map for quick lookup
+  const productMap = new Map(products.map((p) => [p.productId, p]));
+  // Validate each item
+  for (const item of items) {
+    const product = productMap.get(item.productId);
+
+    // Check if product exists
+    if (!product) {
+      validationErrors.push(
+        `Product "${item.productName}" (ID: ${item.productId}) not found`,
+      );
+      continue;
+    }
+
+    // Check product status
+    if (product.status !== ProductStatus.ACTIVE) {
+      validationErrors.push(
+        `Product "${item.productName}" is not available (status: ${product.status})`,
+      );
+      continue;
+    }
+
+    // Check stock availability
+    if (item.variantId) {
+      // Validate variant-based product
+      const variantIndex = parseInt(item.variantId, 10);
+      if (
+        isNaN(variantIndex) ||
+        variantIndex < 0 ||
+        variantIndex >= product.variants.length
+      ) {
+        validationErrors.push(
+          `Invalid variant for product "${item.productName}"`,
+        );
+        continue;
+      }
+
+      const variant = product.variants[variantIndex];
+      if (variant.stock < item.quantity) {
+        validationErrors.push(
+          `Insufficient stock for "${item.productName}" - ${item.variantName}. Available: ${variant.stock}, Requested: ${item.quantity}`,
+        );
+        continue;
+      }
+    } else {
+      // Validate product without variant
+      if (product.variants && product.variants.length > 0) {
+        validationErrors.push(
+          `Product "${item.productName}" has variants but no variant was specified`,
+        );
+        continue;
+      }
+
+      if (product.stock < item.quantity) {
+        validationErrors.push(
+          `Insufficient stock for "${item.productName}". Available: ${product.stock}, Requested: ${item.quantity}`,
+        );
+        continue;
+      }
+    }
+  }
+  if (validationErrors.length > 0) {
+    throw new CustomError(
+      `Order validation failed: ${validationErrors.join("; ")}`,
+      400,
+    );
+  }
 };

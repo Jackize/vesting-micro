@@ -1,5 +1,7 @@
+import { ProductStatus } from "@vestify/shared";
 import mongoose from "mongoose";
 import Order, { IOrder } from "../../models/Order";
+import Product, { IProduct } from "../../models/Product";
 import { generateToken } from "../../utils/jwt";
 
 export const createTestOrder = async (orderData?: {
@@ -69,4 +71,57 @@ export const validObjectId = (): string => {
 
 export const invalidObjectId = (): string => {
   return "invalid-id";
+};
+
+/**
+ * Create a test product in the Product collection
+ * This is used to seed products before creating orders in tests
+ */
+export const createTestProduct = async (productData?: {
+  productId?: string;
+  name?: string;
+  slug?: string;
+  sku?: string;
+  status?: ProductStatus;
+  basePrice?: number;
+  stock?: number;
+  variants?: Array<{
+    name: string;
+    value: string;
+    sku?: string;
+    price?: number;
+    stock: number;
+    image?: string;
+  }>;
+}): Promise<IProduct> => {
+  const defaultProduct = {
+    productId: productData?.productId || "product123",
+    name: productData?.name || "Test Product",
+    slug: productData?.slug || "test-product",
+    sku: productData?.sku || "TEST-PROD-001",
+    status: productData?.status || ProductStatus.ACTIVE,
+    basePrice: productData?.basePrice || 100,
+    stock: productData?.stock !== undefined ? productData.stock : 100,
+    variants: productData?.variants || [],
+  };
+
+  // Check if product already exists
+  const existingProduct = await Product.findByProductId(
+    defaultProduct.productId,
+  );
+  if (existingProduct) {
+    // Update existing product
+    existingProduct.name = defaultProduct.name;
+    existingProduct.slug = defaultProduct.slug;
+    existingProduct.sku = defaultProduct.sku;
+    existingProduct.status = defaultProduct.status;
+    existingProduct.basePrice = defaultProduct.basePrice;
+    existingProduct.stock = defaultProduct.stock;
+    existingProduct.variants = defaultProduct.variants;
+    await existingProduct.save();
+    return existingProduct;
+  }
+
+  const product = await Product.create(defaultProduct);
+  return product;
 };
