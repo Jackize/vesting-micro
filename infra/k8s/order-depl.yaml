@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-depl
+  labels:
+    app: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+      - name: order-service
+        image: order-service:latest
+        imagePullPolicy: Never
+        env:
+        - name: NODE_ENV
+          value: "development"
+        - name: PORT
+          value: "3001"
+        - name: MONGODB_URI
+          value: "mongodb://order-mongo-srv:27017/orders"
+        - name: MONGODB_DB_NAME
+          value: "orders"
+        - name: CORS_ORIGIN
+          value: "http://vestify.com"
+        - name: RABBITMQ_URL
+          value: "amqp://rabbitmq-srv:5672"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: user-secrets
+              key: JWT_SECRET
+        - name: JWT_EXPIRES_IN
+          value: "7d"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-srv
+  labels:
+    app: order-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3001
+    targetPort: 3001
+    protocol: TCP
+    name: http
+  selector:
+    app: order-service
+

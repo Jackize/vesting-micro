@@ -1,3 +1,4 @@
+import { OrderStatus, PaymentStatus } from "@vestify/shared";
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IOrderItem {
@@ -21,15 +22,6 @@ export interface IShippingAddress {
   country: string;
 }
 
-export type OrderStatus =
-  | "pending"
-  | "confirmed"
-  | "processing"
-  | "shipped"
-  | "delivered"
-  | "cancelled"
-  | "expired";
-
 export interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
   orderNumber: string;
@@ -41,7 +33,7 @@ export interface IOrder extends Document {
   discount: number;
   total: number;
   status: OrderStatus;
-  paymentStatus: "pending" | "paid" | "refunded" | "failed";
+  paymentStatus: PaymentStatus;
   paymentMethod?: string;
   paymentIntentId?: string;
   expiresAt: Date;
@@ -143,7 +135,7 @@ const OrderSchema: Schema = new Schema<IOrder>(
     },
     orderNumber: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
       index: true,
     },
@@ -184,27 +176,19 @@ const OrderSchema: Schema = new Schema<IOrder>(
     },
     total: {
       type: Number,
-      required: true,
+      required: false,
       min: [0, "Total must be non-negative"],
     },
     status: {
       type: String,
-      enum: [
-        "pending",
-        "confirmed",
-        "processing",
-        "shipped",
-        "delivered",
-        "cancelled",
-        "expired",
-      ],
-      default: "pending",
+      enum: OrderStatus,
+      default: OrderStatus.PENDING,
       index: true,
     },
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "refunded", "failed"],
-      default: "pending",
+      enum: PaymentStatus,
+      default: PaymentStatus.PENDING,
       index: true,
     },
     paymentMethod: {
@@ -245,12 +229,13 @@ OrderSchema.pre("save", async function (next) {
   try {
     // Generate order number: ORD-YYYYMMDD-HHMMSS-XXXX
     const now = new Date();
+    const userId = (this.userId as mongoose.Types.ObjectId).toString();
     const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
     const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, "");
     const random = Math.floor(Math.random() * 10000)
       .toString()
       .padStart(4, "0");
-    this.orderNumber = `ORD-${dateStr}-${timeStr}-${random}`;
+    this.orderNumber = `ORD-${userId}-${dateStr}-${timeStr}-${random}`;
 
     // Set expiration time to 15 minutes from now
     if (!this.expiresAt) {
@@ -274,7 +259,7 @@ OrderSchema.pre("save", async function (next) {
 
 // Instance method to check if order is expired
 OrderSchema.methods.isExpired = function (): boolean {
-  return new Date() > this.expiresAt && this.status === "pending";
+  return new Date() > this.expiresAt && this.status === OrderStatus.PENDING;
 };
 
 // Instance method to calculate total
@@ -304,7 +289,7 @@ OrderSchema.statics.findByUserId = async function (
 OrderSchema.statics.findExpiredOrders = async function (): Promise<IOrder[]> {
   return this.find({
     expiresAt: { $lt: new Date() },
-    status: "pending",
+    status: OrderStatus.PENDING,
   });
 };
 

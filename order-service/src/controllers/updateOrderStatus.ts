@@ -1,4 +1,4 @@
-import { CustomError } from "@vestify/shared";
+import { CustomError, OrderStatus, PaymentStatus } from "@vestify/shared";
 import { NextFunction, Request, Response } from "express";
 import Order from "../models/Order";
 
@@ -22,13 +22,19 @@ export const updateOrderStatus = async (
   order.status = status as any;
 
   // If status is delivered, mark payment as paid if it was pending
-  if (status === "delivered" && order.paymentStatus === "pending") {
-    order.paymentStatus = "paid";
+  if (
+    status === OrderStatus.DELIVERED &&
+    order.paymentStatus === PaymentStatus.PENDING
+  ) {
+    order.paymentStatus = PaymentStatus.PAID;
   }
 
   // If status is cancelled, mark payment as refunded if it was paid
-  if (status === "cancelled" && order.paymentStatus === "paid") {
-    order.paymentStatus = "refunded";
+  if (
+    status === OrderStatus.CANCELLED &&
+    order.paymentStatus === PaymentStatus.PAID
+  ) {
+    order.paymentStatus = PaymentStatus.REFUNDED;
   }
 
   await order.save();
@@ -38,7 +44,7 @@ export const updateOrderStatus = async (
     message: "Order status updated successfully",
     data: {
       order: {
-        id: order._id,
+        id: order.id,
         orderNumber: order.orderNumber,
         status: order.status,
         paymentStatus: order.paymentStatus,

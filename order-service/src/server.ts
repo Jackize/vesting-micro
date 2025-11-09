@@ -1,5 +1,8 @@
 import app from "./app";
 import database from "./config/database";
+import { ProductCreatedListener } from "./events/listeners/product-created-listener";
+import { ProductUpdatedListener } from "./events/listeners/product-updated-listener";
+import rabbitWrapper from "./rabbitWrapper";
 
 // Connect to database and start server
 const startServer = async (): Promise<void> => {
@@ -16,11 +19,30 @@ const startServer = async (): Promise<void> => {
     if (!process.env.NODE_ENV) {
       throw new Error("NODE_ENV is not set");
     }
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not set");
+    }
+    if (!process.env.JWT_EXPIRES_IN) {
+      throw new Error("JWT_EXPIRES_IN is not set");
+    }
     if (!process.env.CORS_ORIGIN) {
       throw new Error("CORS_ORIGIN is not set");
     }
+    if (!process.env.RABBITMQ_URL) {
+      throw new Error("RABBITMQ_URL is not set");
+    }
+
     // Connect to MongoDB
     await database.connect();
+
+    // Connect to RabbitMQ
+    await rabbitWrapper.connect(process.env.RABBITMQ_URL);
+
+    // Listen for product created events
+    await new ProductCreatedListener(rabbitWrapper.channel).listen();
+
+    // Listen for product updated events
+    await new ProductUpdatedListener(rabbitWrapper.channel).listen();
 
     // Start server
     const server = app.listen(process.env.PORT, () => {
@@ -40,6 +62,12 @@ const startServer = async (): Promise<void> => {
         console.log("✅ HTTP server closed");
 
         try {
+          // Close RabbitMQ connection
+          if (rabbitWrapper.isConnected()) {
+            await rabbitWrapper.disconnect();
+            console.log("✅ RabbitMQ connection closed");
+          }
+
           // Close database connection
           await database.disconnect();
           console.log("✅ Database connection closed");

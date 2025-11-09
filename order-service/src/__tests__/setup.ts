@@ -1,16 +1,13 @@
-import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import mongoose from "mongoose";
 
 // Set test environment variables
 process.env.NODE_ENV = "test";
 process.env.JWT_SECRET =
   process.env.JWT_SECRET || "test-super-secret-jwt-key-for-testing";
 process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
-process.env.JWT_REFRESH_SECRET =
-  process.env.JWT_REFRESH_SECRET || "test-super-secret-refresh-key-for-testing";
-process.env.JWT_REFRESH_EXPIRES_IN =
-  process.env.JWT_REFRESH_EXPIRES_IN || "30d";
 process.env.CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
+process.env.RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost:5672";
 
 let mongoServer: MongoMemoryServer;
 

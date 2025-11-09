@@ -1,9 +1,17 @@
 import request from "supertest";
 import app from "../../app";
-import Order from "../../models/Order";
+import rabbitWrapper from "../../rabbitWrapper";
 import { getAuthToken } from "../helpers/testHelpers";
 
+// Use the shared mock from __mocks__ folder
+jest.mock("../../rabbitWrapper");
+
 describe("Create Order Controller", () => {
+  // Clear mocks before each test
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("POST /api/orders", () => {
     it("should create order with valid data", async () => {
       const token = await getAuthToken();
@@ -44,6 +52,14 @@ describe("Create Order Controller", () => {
       expect(response.body.data.order.status).toBe("pending");
       expect(response.body.data.order.paymentStatus).toBe("pending");
       expect(response.body.data.order).toHaveProperty("expiresAt");
+
+      // Verify RabbitMQ publisher was called
+      expect(rabbitWrapper.channel.assertQueue).toHaveBeenCalled();
+      expect(rabbitWrapper.channel.sendToQueue).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Buffer),
+        { persistent: true },
+      );
     });
 
     it("should set expiration time to 15 minutes from now", async () => {

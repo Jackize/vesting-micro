@@ -1,4 +1,4 @@
-import { CustomError } from "@vestify/shared";
+import { CustomError, OrderStatus, PaymentStatus } from "@vestify/shared";
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Order from "../models/Order";
@@ -31,15 +31,15 @@ export const cancelOrder = async (
   }
 
   // Check if order can be cancelled
-  if (order.status === "cancelled") {
+  if (order.status === OrderStatus.CANCELLED) {
     throw new CustomError("Order is already cancelled", 400);
   }
 
-  if (order.status === "delivered") {
+  if (order.status === OrderStatus.DELIVERED) {
     throw new CustomError("Cannot cancel a delivered order", 400);
   }
 
-  if (order.status === "shipped") {
+  if (order.status === OrderStatus.SHIPPED) {
     throw new CustomError(
       "Cannot cancel a shipped order. Please contact support for a return.",
       400,
@@ -47,11 +47,11 @@ export const cancelOrder = async (
   }
 
   // Cancel the order
-  order.status = "cancelled";
+  order.status = OrderStatus.CANCELLED;
 
   // If payment was made, mark for refund
-  if (order.paymentStatus === "paid") {
-    order.paymentStatus = "refunded";
+  if (order.paymentStatus === PaymentStatus.PAID) {
+    order.paymentStatus = PaymentStatus.REFUNDED;
   }
 
   await order.save();

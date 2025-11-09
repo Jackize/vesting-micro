@@ -5,11 +5,20 @@ metadata:
 manifests:
   rawYaml:
     - ./infra/k8s/*
+portForward:
+  - resourceType: service
+    resourceName: rabbitmq-srv
+    namespace: default
+    port: 5672
+    localPort: 5672
+  - resourceType: service
+    resourceName: rabbitmq-srv
+    namespace: default
+    port: 15672
+    localPort: 15672
 build:
   local:
     push: false
-    useDockerCLI: true
-    tryImportMissing: true
   artifacts:
     - image: user-service
       context: ./user-service
@@ -17,22 +26,30 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*"
-            dest: /app/src
+          - src: "src/**/*.*"
+            dest: .
     - image: product-service
       context: ./product-service
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*"
-            dest: /app/src
+          - src: "src/**/*.*"
+            dest: .
+    - image: order-service
+      context: ./order-service
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.*"
+            dest: .
     - image: client
       context: ./frontend
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "**/*"
+          - src: "**/*.*"
             dest: /app
 
