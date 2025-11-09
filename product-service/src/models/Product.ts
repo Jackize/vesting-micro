@@ -1,3 +1,4 @@
+import { ProductStatus } from "@vestify/shared";
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 // Variant schema for product variations (size, color, etc.)
@@ -25,7 +26,7 @@ export interface IProduct extends Document {
   basePrice: number; // Base price
   compareAtPrice?: number; // Original price (for discounts)
   stock: number; // Total stock (sum of all variants)
-  status: "draft" | "active" | "archived" | "out_of_stock";
+  status: ProductStatus;
   featured: boolean; // Featured product
   rating?: number; // Average rating (calculated from reviews)
   reviewCount?: number; // Number of reviews
@@ -169,8 +170,8 @@ const ProductSchema: Schema = new Schema<IProduct>(
     },
     status: {
       type: String,
-      enum: ["draft", "active", "archived", "out_of_stock"],
-      default: "draft",
+      enum: Object.values(ProductStatus),
+      default: ProductStatus.DRAFT,
     },
     featured: {
       type: Boolean,

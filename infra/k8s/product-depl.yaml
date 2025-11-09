@@ -29,6 +29,15 @@ spec:
           value: "products"
         - name: CORS_ORIGIN
           value: "http://vestify.com"
+        - name: RABBITMQ_URL
+          value: "amqp://rabbitmq-srv:5672"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: user-secrets
+              key: JWT_SECRET
+        - name: JWT_EXPIRES_IN
+          value: "7d"
         resources:
           requests:
             memory: "256Mi"

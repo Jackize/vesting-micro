@@ -1,6 +1,7 @@
 import app from "./app";
 import database from "./config/database";
-import { seedProductsIfEmpty } from "./scripts/autoSeed";
+import { OrderCreatedListener } from "./events/listeners/order-created-listeners";
+import rabbitWrapper from "./rabbitWrapper";
 
 // Connect to database and start server
 const startServer = async (): Promise<void> => {
@@ -17,14 +18,23 @@ const startServer = async (): Promise<void> => {
     if (!process.env.NODE_ENV) {
       throw new Error("NODE_ENV is not set");
     }
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not set");
+    }
+    if (!process.env.JWT_EXPIRES_IN) {
+      throw new Error("JWT_EXPIRES_IN is not set");
+    }
+    if (!process.env.CORS_ORIGIN) {
+      throw new Error("CORS_ORIGIN is not set");
+    }
+    if (!process.env.RABBITMQ_URL) {
+      throw new Error("RABBITMQ_URL is not set");
+    }
     // Connect to MongoDB
     await database.connect();
 
-    // Auto-seed products in development mode if database is empty
-    console.log("Seeding products...");
-    if (process.env.NODE_ENV === "development") {
-      await seedProductsIfEmpty();
-    }
+    // Connect to RabbitMQ
+    await rabbitWrapper.connect(process.env.RABBITMQ_URL);
 
     // Start server
     const server = app.listen(process.env.PORT, () => {
@@ -36,6 +46,9 @@ const startServer = async (): Promise<void> => {
       `);
     });
 
+    // Listen for order created events
+    await new OrderCreatedListener(rabbitWrapper.channel).listen();
+
     // Graceful shutdown handler
     const gracefulShutdown = async (signal: string) => {
       console.log(`\n⚠️ ${signal} received. Shutting down gracefully...`);
@@ -44,6 +57,12 @@ const startServer = async (): Promise<void> => {
         console.log("✅ HTTP server closed");
 
         try {
+          // Close RabbitMQ connection
+          if (rabbitWrapper.isConnected()) {
+            await rabbitWrapper.disconnect();
+            console.log("✅ RabbitMQ connection closed");
+          }
+
           // Close database connection
           await database.disconnect();
           console.log("✅ Database connection closed");
