@@ -1,7 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userApi } from '@/lib/api/userApi';
+import { useAuthStore } from '@/lib/store/authStore';
+import { LoginInput, RegisterInput, UpdateProfileInput } from '@/types/user';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
-import { RegisterInput, LoginInput, UpdateProfileInput } from '@/types/user';
 
 // Query keys
 export const userKeys = {
@@ -65,10 +66,13 @@ export const useRegister = () => {
 // Login mutation
 export const useLogin = () => {
   const queryClient = useQueryClient();
-
+  const setUser = useAuthStore((state) => state.setUser);
+  const setToken = useAuthStore((state) => state.setToken);
   return useMutation({
     mutationFn: (data: LoginInput) => userApi.login(data),
     onSuccess: async (data) => {
+      setUser(data.user);
+      setToken(data.token);
       // Save token to cookie
       Cookies.set('auth_token', data.token, { expires: 7 }); // 7 days
       // Invalidate and refetch current user to get full data from API
