@@ -1,8 +1,15 @@
 import request from "supertest";
 import app from "../../app";
+import rabbitWrapper from "../../rabbitWrapper";
 import { getAdminToken, getUserToken } from "../helpers/testHelpers";
 
+jest.mock("../../rabbitWrapper");
 describe("createProduct Controller", () => {
+  // Clear mocks before each test
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("POST /api/products (Admin)", () => {
     it("should create product with admin token", async () => {
       const token = getAdminToken();
@@ -30,6 +37,14 @@ describe("createProduct Controller", () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data.product.name).toBe(productData.name);
       expect(response.body.data.product.slug).toBe(productData.slug);
+
+      // Verify RabbitMQ publisher was called
+      expect(rabbitWrapper.channel.assertQueue).toHaveBeenCalled();
+      expect(rabbitWrapper.channel.sendToQueue).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Buffer),
+        { persistent: true },
+      );
     });
 
     it("should create product with variants", async () => {

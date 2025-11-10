@@ -6,6 +6,7 @@ import {
   getAllProducts,
   getCategories,
   getFeaturedProducts,
+  getProductById,
   getProductBySlug,
   getProductsByCategory,
   searchProducts,
@@ -41,7 +42,7 @@ router.get("/featured", getFeaturedProducts);
 router.get("/search", validateSearchQuery, searchProducts);
 router.get("/category/:category", getProductsByCategory);
 router.get("/slug/:slug", getProductBySlug);
-// router.get("/:id", getProductById); // Commented out to avoid conflicts
+router.get("/:id", getProductById);
 
 // Protected routes (Admin only)
 router.post(

@@ -1,5 +1,6 @@
 import request from "supertest";
 import app from "../../app";
+import rabbitWrapper from "../../rabbitWrapper";
 import {
   createTestProduct,
   getAdminToken,
@@ -7,7 +8,13 @@ import {
   validObjectId,
 } from "../helpers/testHelpers";
 
+jest.mock("../../rabbitWrapper");
 describe("updateProduct Controller", () => {
+  // Clear mocks before each test
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("PUT /api/products/:id (Admin)", () => {
     it("should update product with admin token", async () => {
       const token = getAdminToken();
@@ -27,6 +34,14 @@ describe("updateProduct Controller", () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data.product.name).toBe(updateData.name);
       expect(response.body.data.product.basePrice).toBe(updateData.basePrice);
+
+      // Verify RabbitMQ publisher was called
+      expect(rabbitWrapper.channel.assertQueue).toHaveBeenCalled();
+      expect(rabbitWrapper.channel.sendToQueue).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Buffer),
+        { persistent: true },
+      );
     });
 
     it("should return 404 for non-existent product", async () => {
