@@ -1,5 +1,6 @@
 import {
   BaseListener,
+  Exchanges,
   ProductCreatedEvent,
   ProductStatus,
   Subjects,
@@ -7,13 +8,10 @@ import {
 import Product from "../../models/Product";
 
 export class ProductCreatedListener extends BaseListener<ProductCreatedEvent> {
-  queueName: Subjects.ProductCreated = Subjects.ProductCreated;
+  routingKey: Subjects.ProductCreated = Subjects.ProductCreated;
+  exchangeName: Exchanges.Product = Exchanges.Product;
 
   async handle(data: ProductCreatedEvent["data"]): Promise<void> {
-    console.log(
-      `📦 Processing product created event: ${data.name} (ID: ${data.id})`,
-    );
-
     try {
       // Check if product already exists (in case of duplicate events)
       const existingProduct = await Product.findByProductId(data.id);
@@ -38,7 +36,6 @@ export class ProductCreatedListener extends BaseListener<ProductCreatedEvent> {
           image: v.image,
         }));
         await existingProduct.save();
-        console.log(`✅ Product updated: ${data.name} (ID: ${data.id})`);
       } else {
         // Create new product
         const product = await Product.create({

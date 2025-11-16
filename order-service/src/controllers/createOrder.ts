@@ -51,6 +51,7 @@ export const createOrder = async (
     shippingCost: order.shippingCost,
     tax: order.tax,
     discount: order.discount,
+    expiresAt: order.expiresAt.toISOString(),
   });
 
   res.status(201).json({

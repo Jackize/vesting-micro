@@ -20,50 +20,50 @@ class RabbitWrapper {
    * @param url RabbitMQ connection URL
    */
   async connect(url: string): Promise<void> {
-    try {
-      if (this._connection) {
-        console.log("✅ RabbitMQ connection already exists");
+    if (this._connection) return;
+
+    const maxRetries = 5;
+    for (let i = 1; i <= maxRetries; i++) {
+      try {
+        this._connection = await amqp.connect(url);
+        this._channel = await this._connection.createChannel();
+        console.log("RBMQ connected");
+        this.setupHandlers();
         return;
+      } catch (error) {
+        if (i === maxRetries) {
+          console.log("Failed to connect RBMQ after 5 tries: ", error);
+          throw error;
+        }
+        await this.sleep(1000 * 5);
       }
+    }
+  }
 
-      console.log("🔌 Connecting to RabbitMQ...");
-      this._connection = await amqp.connect(url);
-      console.log("✅ Connected to RabbitMQ");
+  private setupHandlers() {
+    if (!this._connection || !this._channel) return;
 
-      // Setup connection error handler
-      this._connection.on("error", (err: Error) => {
-        console.error("❌ RabbitMQ connection error:", err);
-        this._connection = null;
-        this._channel = null;
-      });
-
-      // Setup connection close handler
-      this._connection.on("close", () => {
-        console.warn("⚠️ RabbitMQ connection closed");
-        this._connection = null;
-        this._channel = null;
-      });
-
-      // Create channel
-      this._channel = await this._connection.createChannel();
-      console.log("✅ RabbitMQ channel created");
-
-      // Setup channel error handler
-      this._channel.on("error", (err: Error) => {
-        console.error("❌ RabbitMQ channel error:", err);
-      });
-
-      // Setup channel close handler
-      this._channel.on("close", () => {
-        console.warn("⚠️ RabbitMQ channel closed");
-        this._channel = null;
-      });
-    } catch (error) {
-      console.error("❌ Failed to connect to RabbitMQ:", error);
+    this._connection.on("error", () => {
       this._connection = null;
       this._channel = null;
-      throw error;
-    }
+    });
+
+    this._connection.on("close", () => {
+      this._connection = null;
+      this._channel = null;
+    });
+
+    this._channel.on("error", () => {
+      this._channel = null;
+    });
+
+    this._channel.on("close", () => {
+      this._channel = null;
+    });
+  }
+
+  private sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -105,13 +105,11 @@ class RabbitWrapper {
       if (this._channel) {
         await this._channel.close();
         this._channel = null;
-        console.log("✅ RabbitMQ channel closed");
       }
 
       if (this._connection) {
         await this._connection.close();
         this._connection = null;
-        console.log("✅ RabbitMQ connection closed");
       }
     } catch (error) {
       console.error("❌ Error closing RabbitMQ connection:", error);

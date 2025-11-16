@@ -1,12 +1,16 @@
-import { BaseListener, ProductUpdatedEvent, Subjects } from "@vestify/shared";
+import {
+  BaseListener,
+  Exchanges,
+  ProductUpdatedEvent,
+  Subjects,
+} from "@vestify/shared";
 import Product from "../../models/Product";
 
 export class ProductUpdatedListener extends BaseListener<ProductUpdatedEvent> {
-  queueName: Subjects.ProductUpdated = Subjects.ProductUpdated;
+  routingKey: Subjects.ProductUpdated = Subjects.ProductUpdated;
+  exchangeName: Exchanges.Product = Exchanges.Product;
 
   async handle(data: ProductUpdatedEvent["data"]): Promise<void> {
-    console.log(`📦 Processing product updated event: (ID: ${data.id})`);
-
     try {
       // Find existing product
       const product = await Product.findByProductId(data.id);

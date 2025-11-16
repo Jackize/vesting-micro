@@ -1,5 +1,6 @@
 import app from "./app";
 import database from "./config/database";
+import { OrderExpireListener } from "./events/listeners/order-expired-listener";
 import { ProductCreatedListener } from "./events/listeners/product-created-listener";
 import { ProductUpdatedListener } from "./events/listeners/product-updated-listener";
 import rabbitWrapper from "./rabbitWrapper";
@@ -38,12 +39,6 @@ const startServer = async (): Promise<void> => {
     // Connect to RabbitMQ
     await rabbitWrapper.connect(process.env.RABBITMQ_URL);
 
-    // Listen for product created events
-    await new ProductCreatedListener(rabbitWrapper.channel).listen();
-
-    // Listen for product updated events
-    await new ProductUpdatedListener(rabbitWrapper.channel).listen();
-
     // Start server
     const server = app.listen(process.env.PORT, () => {
       console.log(`
@@ -53,6 +48,21 @@ const startServer = async (): Promise<void> => {
         🕐 Time: ${new Date().toISOString()}
       `);
     });
+
+    // Listen for product created events
+    await new ProductCreatedListener(rabbitWrapper.channel).listen(
+      "order-svc.product.created",
+    );
+
+    // Listen for product updated events
+    await new ProductUpdatedListener(rabbitWrapper.channel).listen(
+      "order-svc.product.updated",
+    );
+
+    // Listen for order expired events
+    await new OrderExpireListener(rabbitWrapper.channel).listen(
+      "order-svc.order.expired",
+    );
 
     // Graceful shutdown handler
     const gracefulShutdown = async (signal: string) => {

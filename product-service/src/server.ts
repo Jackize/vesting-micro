@@ -1,6 +1,5 @@
 import app from "./app";
 import database from "./config/database";
-import { OrderCreatedListener } from "./events/listeners/order-created-listeners";
 import rabbitWrapper from "./rabbitWrapper";
 
 // Connect to database and start server
@@ -45,9 +44,6 @@ const startServer = async (): Promise<void> => {
         🕐 Time: ${new Date().toISOString()}
       `);
     });
-
-    // Listen for order created events
-    await new OrderCreatedListener(rabbitWrapper.channel).listen();
 
     // Graceful shutdown handler
     const gracefulShutdown = async (signal: string) => {

@@ -1,5 +1,11 @@
-import { BasePublisher, ProductCreatedEvent, Subjects } from "@vestify/shared";
+import {
+  BasePublisher,
+  Exchanges,
+  ProductCreatedEvent,
+  Subjects,
+} from "@vestify/shared";
 
 export class ProductCreatedPublisher extends BasePublisher<ProductCreatedEvent> {
-  queueName: Subjects.ProductCreated = Subjects.ProductCreated;
+  routingKey: Subjects.ProductCreated = Subjects.ProductCreated;
+  exchangeName: Exchanges.Product = Exchanges.Product;
 }
