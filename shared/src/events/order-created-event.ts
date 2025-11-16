@@ -1,4 +1,4 @@
-import { Subjects } from "./subjects";
+import { Exchanges, Subjects } from "./subjects";
 export interface IOrderItem {
   productId: string;
   productName: string;
@@ -21,7 +21,8 @@ export interface IShippingAddress {
 }
 
 export interface OrderCreatedEvent {
-  queueName: Subjects.OrderCreated;
+  routingKey: Subjects.OrderCreated;
+  exchangeName: Exchanges.Order;
   data: {
     id: string;
     userId: string;
@@ -32,5 +33,6 @@ export interface OrderCreatedEvent {
     shippingCost: number;
     tax: number;
     discount: number;
+    expiresAt: string;
   };
 }

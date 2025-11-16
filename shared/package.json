@@ -1,6 +1,6 @@
 {
   "name": "@vestify/shared",
-  "version": "1.0.13",
+  "version": "1.0.16",
   "description": "Shared utilities, middleware, and common modules for Vestify microservices",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

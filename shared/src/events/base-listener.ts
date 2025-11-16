@@ -1,11 +1,14 @@
 import { Channel, Message } from "amqplib";
 interface Event {
-  queueName: string;
+  routingKey: string;
+  exchangeName: string;
   data: any;
 }
 
 export abstract class BaseListener<T extends Event> {
-  abstract queueName: T["queueName"];
+  abstract routingKey: T["routingKey"];
+  abstract exchangeName: T["exchangeName"];
+
   private channel: Channel;
   abstract handle(event: T["data"]): Promise<void>;
 
@@ -13,33 +16,45 @@ export abstract class BaseListener<T extends Event> {
     this.channel = channel;
   }
 
-  async listen(): Promise<void> {
-    // Assert queue exists before consuming
-    await this.channel.assertQueue(this.queueName, {
+  async listen(queueName: string): Promise<void> {
+    // Assert exchange
+    await this.channel.assertExchange(this.exchangeName, "topic", {
       durable: true,
     });
+    // Limit in-flight
+    await this.channel.prefetch(1);
 
-    console.log(`✅ Queue '${this.queueName}' asserted`);
-    console.log(`👂 Listening for messages on queue '${this.queueName}'...`);
+    // Assert queue (unique per service)
+    await this.channel.assertQueue(queueName, {
+      durable: true,
+      exclusive: false,
+      autoDelete: false,
+    });
+
+    // Bind queue to exchange with routing key
+    await this.channel.bindQueue(queueName, this.exchangeName, this.routingKey);
+
+    console.log(
+      `👂 Listening for messages on queue ${queueName} to '${this.routingKey}'...`
+    );
 
     // Start consuming messages - this runs indefinitely
     this.channel.consume(
-      this.queueName,
+      queueName,
       async (msg: Message | null) => {
         if (!msg) {
-          console.log(`⚠️ Received null message from queue ${this.queueName}`);
+          console.log(`⚠️ Received null message from queue ${this.routingKey}`);
           return;
         }
         try {
           const event: T["data"] = JSON.parse(msg.content.toString());
-          console.log(`📨 Received message on queue '${this.queueName}'`);
           await this.handle(event);
           this.channel.ack(msg);
-          console.log(`✅ Message processed and acknowledged`);
         } catch (error) {
-          console.error(`❌ Error processing message:`, error);
           this.channel.nack(msg, false, true);
-          console.log(`🔄 Message requeued`);
+          console.log(
+            `🔄 Message requeued queue: ${queueName}, routing key: ${this.routingKey}, error: ${error}`
+          );
         }
       },
       {

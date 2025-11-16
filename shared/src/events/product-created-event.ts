@@ -1,5 +1,5 @@
 import { ProductStatus } from "../types/product-status";
-import { Subjects } from "./subjects";
+import { Exchanges, Subjects } from "./subjects";
 
 export interface IProductVariant {
   name: string; // e.g., "Size", "Color"
@@ -11,7 +11,8 @@ export interface IProductVariant {
 }
 
 export interface ProductCreatedEvent {
-  queueName: Subjects.ProductCreated;
+  routingKey: Subjects.ProductCreated;
+  exchangeName: Exchanges.Product;
   data: {
     id: string;
     name: string;
