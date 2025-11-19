@@ -3,6 +3,7 @@ import {
   Exchanges,
   OrderExpiredEvent,
   OrderStatus,
+  PaymentStatus,
   Subjects,
 } from "@vestify/shared";
 import Order from "../../models/Order";
@@ -24,6 +25,7 @@ export class OrderExpireListener extends BaseListener<OrderExpiredEvent> {
       }
 
       order.status = OrderStatus.EXPIRED;
+      order.paymentStatus = PaymentStatus.FAILED;
 
       await order.save();
       console.log("Order updated status Expire");

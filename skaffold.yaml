@@ -9,11 +9,6 @@ portForward:
   - resourceType: service
     resourceName: rabbitmq-srv
     namespace: default
-    port: 5672
-    localPort: 5672
-  - resourceType: service
-    resourceName: rabbitmq-srv
-    namespace: default
     port: 15672
     localPort: 15672
 build:
@@ -38,6 +33,14 @@ build:
             dest: .
     - image: order-service
       context: ./order-service
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.*"
+            dest: .
+    - image: job-service
+      context: ./jobs-service
       docker:
         dockerfile: Dockerfile
       sync:
