@@ -13,7 +13,8 @@ A modern, scalable, microservice-based e-commerce platform for selling vests wit
 - 📢 Easy product sharing (Facebook, Instagram, Shopee, TikTok, etc.)
 - 🎁 Discounts, coupons, and promotions
 - 📦 Inventory & order management
-- 🧠 Smart recommendation system (“You may also like”)
+- ⏰ Automatic order expiration with status updates
+- 🧠 Smart recommendation system ("You may also like")
 - 📈 Admin dashboard with sales analytics
 - 📱 Fully responsive and PWA-ready
 - 🚀 SEO-friendly, fast, and scalable
@@ -50,7 +51,7 @@ A modern, scalable, microservice-based e-commerce platform for selling vests wit
 | Cache | **Redis** | Caching, session management, and queue optimization |
 | File Storage | **AWS S3 + CloudFront CDN** | Scalable static asset and video hosting |
 | Search | **ElasticSearch** | Full-text search and fast product filtering |
-| Background Jobs | **BullMQ (Redis)** | Queues for notifications, indexing, emails |
+| Background Jobs | **BullMQ (Redis)** | Queues for notifications, indexing, emails, order expiration |
 | Payment Integration | **Stripe / PayPal / MoMo / ZaloPay** | Secure and multi-region payment gateways |
 | Authentication | **NextAuth.js + JWT + Refresh Tokens** | Secure, scalable user authentication |
 | Notifications | **Firebase Cloud Messaging (FCM)** | Push notifications to users |
@@ -67,6 +68,7 @@ A modern, scalable, microservice-based e-commerce platform for selling vests wit
 | **Product Service** | CRUD operations, product variants, stock management |
 | **Order Service** | Cart, checkout, order tracking |
 | **Payment Service** | Payment processing and integration |
+| **Jobs Service** | Background job processing (order expiration, email, notifications, indexing) using BullMQ |
 | **Review Service** | Ratings, video reviews, and product comments |
 | **Discount Service** | Coupons, promo codes, and referral logic |
 | **Notification Service** | Email, SMS, and push notifications |
@@ -76,9 +78,32 @@ A modern, scalable, microservice-based e-commerce platform for selling vests wit
 
 ```plaintext
 order.created → payment-service
+order.created → jobs-service (schedules BullMQ expiration job)
 payment.success → notification-service
 product.stock.update → analytics-service
+order.expired → order-service (update status)
+order.expired → notification-service (notify user)
 ```
+
+**Jobs Service Workflow:**
+
+The **Jobs Service** handles various background jobs using BullMQ:
+
+1. **Listens to `order.created` events** from RabbitMQ
+2. **Schedules a delayed BullMQ job** for each order based on its `expiresAt` timestamp (typically 15 minutes after creation)
+3. **When the job executes**, the service:
+   - Checks if the order is still pending and hasn't been paid
+   - Publishes an `order.expired` event to RabbitMQ
+   - Updates the order status to `EXPIRED` in the order-service
+   - Triggers notifications to the user via notification-service
+   - Releases reserved inventory back to product-service
+
+**Key Features:**
+- ⏰ **Multiple job types** - expiration, email, notification, indexing
+- 🔄 **Event-driven architecture** with RabbitMQ
+- 🛡️ **Reliable job processing** with BullMQ retry mechanisms
+- 📊 **Scalable** - handles high volumes of jobs with concurrent processing
+- 🔔 **Integration** with multiple services
 
 ---
 
@@ -187,6 +212,7 @@ product.stock.update → analytics-service
 │ ├─ product-service        │
 │ ├─ order-service          │
 │ ├─ payment-service        │
+│ ├─ jobs-service           │
 │ ├─ review-service         │
 │ ├─ discount-service       │
 │ ├─ notification-service   │
@@ -217,8 +243,9 @@ product.stock.update → analytics-service
 - Basic analytics and inventory tracking
 
 # 🚀 Phase 2: Growth
-- Review, Discount, and Notification microservices
+- Review, Discount, Notification, and Jobs microservices
 - Full RabbitMQ event flow
+- BullMQ job queues for background jobs (expiration, email, notifications, indexing)
 - SEO optimization and OpenGraph sharing
 - Redis caching and ElasticSearch search engine
 
