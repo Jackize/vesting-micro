@@ -62,8 +62,9 @@ describe("Create Order Controller", () => {
       expect(response.body.data.order).toHaveProperty("expiresAt");
 
       // Verify RabbitMQ publisher was called
-      expect(rabbitWrapper.channel.assertQueue).toHaveBeenCalled();
-      expect(rabbitWrapper.channel.sendToQueue).toHaveBeenCalledWith(
+      expect(rabbitWrapper.channel.assertExchange).toHaveBeenCalled();
+      expect(rabbitWrapper.channel.publish).toHaveBeenCalledWith(
+        expect.any(String),
         expect.any(String),
         expect.any(Buffer),
         { persistent: true },

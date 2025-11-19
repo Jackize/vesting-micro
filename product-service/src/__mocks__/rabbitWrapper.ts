@@ -8,6 +8,8 @@ const mockChannel = {
     consumerCount: 0,
   }),
   sendToQueue: jest.fn(),
+  assertExchange: jest.fn(),
+  publish: jest.fn(),
   consume: jest.fn(),
   close: jest.fn().mockResolvedValue(undefined),
   on: jest.fn(),
