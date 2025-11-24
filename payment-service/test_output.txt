@@ -1,0 +1,421 @@
+
+> product-service@1.0.0 test
+> jest src/__tests__/controllers/createPayment.test.ts
+
+  console.log
+    Headers: {
+      host: '127.0.0.1:63311',
+      'accept-encoding': 'gzip, deflate',
+      cookie: 'session=eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKMWMyVnlTV1FpT2lJMk9USXhZV0kyWm1NNVkyUTFPVGhrTVRrNE1XTm1NVGdpTENKbGJXRnBiQ0k2SW5SbGMzUkFkR1Z6ZEM1amIyMGlMQ0p5YjJ4bElqb2lkWE5sY2lJc0ltbGhkQ0k2TVRjMk16Z3hOREkxTlgwLnpHenhiSGJ4ZVdZZE05SXZNcUhuMExiUUR3alJSbW1abEdtSWFUVHVUV28ifQ==',
+      'content-type': 'application/json',
+      'content-length': '57',
+      connection: 'close'
+    }
+
+      at src/app.ts:42:11
+
+  console.log
+    Session: Session {
+      jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTIxYWI2ZmM5Y2Q1OThkMTk4MWNmMTgiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MzgxNDI1NX0.zGzxbHbxeWYdM9IvMqHn0LbQDwjRRmmZlGmIaTTuTWo'
+    }
+
+      at src/app.ts:43:11
+
+  console.error
+    Error: {
+      message: 'Not authorized, user not found in request',
+      stack: 'Error: Not authorized, user not found in request\n' +
+        '    at requireAuth (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/requireAuth.ts:14:15)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at currentUser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/currentUser.ts:40:14)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at Route.dispatch (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at Function.handle (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:175:3)\n' +
+        '    at router (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:47:12)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/src/app.ts:44:3\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at urlencodedParser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/types/urlencoded.js:85:7)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/read.js:137:5\n' +
+        '    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n' +
+        '    at invokeCallback (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:238:16)\n' +
+        '    at done (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:227:7)\n' +
+        '    at IncomingMessage.onEnd (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:287:7)\n' +
+        '    at IncomingMessage.emit (node:events:519:28)\n' +
+        '    at endReadableNT (node:internal/streams/readable:1698:12)\n' +
+        '    at processTicksAndRejections (node:internal/process/task_queues:90:21)',
+      url: '/api/payments/create-payment',
+      method: 'POST'
+    }
+
+      at errorHandler (node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/errorHandler.ts:15:11)
+      at newFn (node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at Immediate.next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Immediate._onImmediate (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:646:15)
+
+  console.log
+    Headers: {
+      host: '127.0.0.1:63316',
+      'accept-encoding': 'gzip, deflate',
+      cookie: 'session=eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKMWMyVnlTV1FpT2lJMk9USXhZV0kyWm1NNVkyUTFPVGhrTVRrNE1XTm1NaklpTENKbGJXRnBiQ0k2SW5SbGMzUkFkR1Z6ZEM1amIyMGlMQ0p5YjJ4bElqb2lkWE5sY2lJc0ltbGhkQ0k2TVRjMk16Z3hOREkxTlgwLngxRFdwSFkteDE2QkdnajdTX29wbjA0MnNULVlCWms5cWpaSk80LXlrRFUifQ==',
+      'content-type': 'application/json',
+      'content-length': '57',
+      connection: 'close'
+    }
+
+      at src/app.ts:42:11
+
+  console.log
+    Session: Session {
+      jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTIxYWI2ZmM5Y2Q1OThkMTk4MWNmMjIiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MzgxNDI1NX0.x1DWpHY-x16BGgj7S_opn042sT-YBZk9qjZJO4-ykDU'
+    }
+
+      at src/app.ts:43:11
+
+  console.error
+    Error: {
+      message: 'Not authorized, user not found in request',
+      stack: 'Error: Not authorized, user not found in request\n' +
+        '    at requireAuth (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/requireAuth.ts:14:15)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at currentUser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/currentUser.ts:40:14)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at Route.dispatch (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at Function.handle (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:175:3)\n' +
+        '    at router (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:47:12)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/src/app.ts:44:3\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at urlencodedParser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/types/urlencoded.js:85:7)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/read.js:137:5\n' +
+        '    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n' +
+        '    at invokeCallback (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:238:16)\n' +
+        '    at done (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:227:7)\n' +
+        '    at IncomingMessage.onEnd (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:287:7)\n' +
+        '    at IncomingMessage.emit (node:events:519:28)\n' +
+        '    at endReadableNT (node:internal/streams/readable:1698:12)\n' +
+        '    at processTicksAndRejections (node:internal/process/task_queues:90:21)',
+      url: '/api/payments/create-payment',
+      method: 'POST'
+    }
+
+      at errorHandler (node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/errorHandler.ts:15:11)
+      at newFn (node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at Immediate.next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Immediate._onImmediate (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:646:15)
+
+  console.log
+    Headers: {
+      host: '127.0.0.1:63318',
+      'accept-encoding': 'gzip, deflate',
+      cookie: 'session=eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKMWMyVnlTV1FpT2lJMk9USXhZV0kyWm1NNVkyUTFPVGhrTVRrNE1XTm1NalVpTENKbGJXRnBiQ0k2SW5SbGMzUkFkR1Z6ZEM1amIyMGlMQ0p5YjJ4bElqb2lkWE5sY2lJc0ltbGhkQ0k2TVRjMk16Z3hOREkxTlgwLkNwcGpaOEVscWc3YWxXd1B5bGJMakdYNkh5eUxCZ0w5RDY5TjlUMjZvR1EifQ==',
+      'content-type': 'application/json',
+      'content-length': '57',
+      connection: 'close'
+    }
+
+      at src/app.ts:42:11
+
+  console.log
+    Session: Session {
+      jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTIxYWI2ZmM5Y2Q1OThkMTk4MWNmMjUiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MzgxNDI1NX0.CppjZ8Elqg7alWwPylbLjGX6HyyLBgL9D69N9T26oGQ'
+    }
+
+      at src/app.ts:43:11
+
+  console.error
+    Error: {
+      message: 'Not authorized, user not found in request',
+      stack: 'Error: Not authorized, user not found in request\n' +
+        '    at requireAuth (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/requireAuth.ts:14:15)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at currentUser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/currentUser.ts:40:14)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at Route.dispatch (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at Function.handle (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:175:3)\n' +
+        '    at router (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:47:12)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/src/app.ts:44:3\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at urlencodedParser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/types/urlencoded.js:85:7)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/read.js:137:5\n' +
+        '    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n' +
+        '    at invokeCallback (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:238:16)\n' +
+        '    at done (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:227:7)\n' +
+        '    at IncomingMessage.onEnd (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:287:7)\n' +
+        '    at IncomingMessage.emit (node:events:519:28)\n' +
+        '    at endReadableNT (node:internal/streams/readable:1698:12)\n' +
+        '    at processTicksAndRejections (node:internal/process/task_queues:90:21)',
+      url: '/api/payments/create-payment',
+      method: 'POST'
+    }
+
+      at errorHandler (node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/errorHandler.ts:15:11)
+      at newFn (node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at Immediate.next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Immediate._onImmediate (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:646:15)
+
+  console.log
+    Headers: {
+      host: '127.0.0.1:63320',
+      'accept-encoding': 'gzip, deflate',
+      cookie: 'session=eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKMWMyVnlTV1FpT2lJMk9USXhZV0kyWm1NNVkyUTFPVGhrTVRrNE1XTm1NbUlpTENKbGJXRnBiQ0k2SW5SbGMzUkFkR1Z6ZEM1amIyMGlMQ0p5YjJ4bElqb2lkWE5sY2lJc0ltbGhkQ0k2TVRjMk16Z3hOREkxTlgwLjhfMG53dXBuTUxIczBRU081eWRVQWdFaktKQlBOVEd5ZXdBWFh2bloyb00ifQ==',
+      'content-type': 'application/json',
+      'content-length': '57',
+      connection: 'close'
+    }
+
+      at src/app.ts:42:11
+
+  console.log
+    Session: Session {
+      jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTIxYWI2ZmM5Y2Q1OThkMTk4MWNmMmIiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MzgxNDI1NX0.8_0nwupnMLHs0QSO5ydUAgEjKJBPNTGyewAXXvnZ2oM'
+    }
+
+      at src/app.ts:43:11
+
+  console.error
+    Error: {
+      message: 'Not authorized, user not found in request',
+      stack: 'Error: Not authorized, user not found in request\n' +
+        '    at requireAuth (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/requireAuth.ts:14:15)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at currentUser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/currentUser.ts:40:14)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:149:13)\n' +
+        '    at Route.dispatch (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/route.js:119:3)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:284:15\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at Function.handle (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:175:3)\n' +
+        '    at router (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:47:12)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/src/app.ts:44:3\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at urlencodedParser (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/types/urlencoded.js:85:7)\n' +
+        '    at newFn (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)\n' +
+        '    at Layer.handle [as handle_request] (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:95:5)\n' +
+        '    at trim_prefix (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:328:13)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9\n' +
+        '    at Function.process_params (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)\n' +
+        '    at next (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)\n' +
+        '    at /Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/body-parser@1.20.3/node_modules/body-parser/lib/read.js:137:5\n' +
+        '    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n' +
+        '    at invokeCallback (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:238:16)\n' +
+        '    at done (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:227:7)\n' +
+        '    at IncomingMessage.onEnd (/Users/thanhhao/Documents/projects/vesting/payment-service/node_modules/.pnpm/raw-body@2.5.2/node_modules/raw-body/index.js:287:7)\n' +
+        '    at IncomingMessage.emit (node:events:519:28)\n' +
+        '    at endReadableNT (node:internal/streams/readable:1698:12)\n' +
+        '    at processTicksAndRejections (node:internal/process/task_queues:90:21)',
+      url: '/api/payments/create-payment',
+      method: 'POST'
+    }
+
+      at errorHandler (node_modules/.pnpm/@vestify+shared@1.0.16/node_modules/@vestify/shared/src/middleware/errorHandler.ts:15:11)
+      at newFn (node_modules/.pnpm/express-async-errors@3.1.1_express@4.21.2/node_modules/express-async-errors/index.js:16:20)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:71:5)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Layer.handle_error (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/layer.js:67:12)
+      at trim_prefix (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:326:13)
+      at node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:286:9
+      at Function.process_params (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:346:12)
+      at Immediate.next (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:280:10)
+      at Immediate._onImmediate (node_modules/.pnpm/express@4.21.2/node_modules/express/lib/router/index.js:646:15)
+
+  console.log
+    ✅ Test database connection closed
+
+      at Object.<anonymous> (src/__tests__/setup.ts:71:13)
+
+FAIL src/__tests__/controllers/createPayment.test.ts
+  Create Payment Controller
+    ✕ returns a 404 when purchasing an order that does not exist (53 ms)
+    ✓ returns a 401 when purchasing an order that does not belong to the user (15 ms)
+    ✕ returns a 400 when purchasing a cancelled order (10 ms)
+    ✕ returns a 201 with valid inputs (7 ms)
+
+  ● Create Payment Controller › returns a 404 when purchasing an order that does not exist
+
+    expected 404 "Not Found", got 401 "Unauthorized"
+
+      24 |         orderId: new mongoose.Types.ObjectId().toHexString(),
+      25 |       })
+    > 26 |       .expect(404);
+         |        ^
+      27 |   });
+      28 |
+      29 |   it("returns a 401 when purchasing an order that does not belong to the user", async () => {
+
+      at Object.<anonymous> (src/__tests__/controllers/createPayment.test.ts:26:8)
+      ----
+      at Test._assertStatus (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:252:14)
+      at node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:120:14)
+
+  ● Create Payment Controller › returns a 400 when purchasing a cancelled order
+
+    expected 400 "Bad Request", got 401 "Unauthorized"
+
+      67 |         token: "tok_visa",
+      68 |       })
+    > 69 |       .expect(400);
+         |        ^
+      70 |   });
+      71 |
+      72 |   it("returns a 201 with valid inputs", async () => {
+
+      at Object.<anonymous> (src/__tests__/controllers/createPayment.test.ts:69:8)
+      ----
+      at Test._assertStatus (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:252:14)
+      at node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:120:14)
+
+  ● Create Payment Controller › returns a 201 with valid inputs
+
+    expected 201 "Created", got 401 "Unauthorized"
+
+      90 |         orderId: order.id,
+      91 |       })
+    > 92 |       .expect(201);
+         |        ^
+      93 |
+      94 |     const payment = await Payment.findOne({
+      95 |       orderId: order.id,
+
+      at Object.<anonymous> (src/__tests__/controllers/createPayment.test.ts:92:8)
+      ----
+      at Test._assertStatus (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:252:14)
+      at node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/.pnpm/supertest@6.3.4/node_modules/supertest/lib/test.js:120:14)
+
+Test Suites: 1 failed, 1 total
+Tests:       3 failed, 1 passed, 4 total
+Snapshots:   0 total
+Time:        2.284 s, estimated 3 s
+Ran all test suites matching /src\/__tests__\/controllers\/createPayment.test.ts/i.
