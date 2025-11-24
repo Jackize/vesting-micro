@@ -135,7 +135,6 @@ export default function ProductDetailPage() {
       const order = await createOrderMutation.mutateAsync(orderData);
 
       // Show success message and redirect to order confirmation
-      alert(`Order created successfully! Order Number: ${order.orderNumber}`);
       router.push(`/orders/${order.id}`);
     } catch (error: any) {
       // Error handling - if 401, redirect is already handled by API client

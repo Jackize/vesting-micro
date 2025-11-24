@@ -59,6 +59,9 @@ importers:
       react-hook-form:
         specifier: ^7.49.3
         version: 7.66.0(react@19.2.0)
+      react-stripe-checkout:
+        specifier: ^2.6.3
+        version: 2.6.3
       tailwind-merge:
         specifier: ^2.2.1
         version: 2.6.0
@@ -2872,6 +2875,9 @@ packages:
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+
+  react-stripe-checkout@2.6.3:
+    resolution: {integrity: sha512-lnsCaAdlmwPGGMbQoI8FXtQUgEm+ktzPZ/ipAw4j0HYf80kef7CivGx6QitmgEn99/aa5hI/dmVXwfVZW/Mzfg==}
 
   react@19.2.0:
     resolution: {integrity: sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ==}
@@ -6548,6 +6554,8 @@ snapshots:
   react-is@17.0.2: {}
 
   react-is@18.3.1: {}
+
+  react-stripe-checkout@2.6.3: {}
 
   react@19.2.0: {}
 

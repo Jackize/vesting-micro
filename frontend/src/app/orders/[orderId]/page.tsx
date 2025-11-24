@@ -3,17 +3,22 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useOrder } from '@/lib/react-query/queries/orderQueries';
+import { useCreatePayment } from '@/lib/react-query/queries/paymentQueries';
+import { useCurrentUser } from '@/lib/react-query/queries/userQueries';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import StripeCheckout from 'react-stripe-checkout';
 
 export default function OrderDetailPage() {
   const params = useParams();
   const orderId = params.orderId as string;
   const { data: order, isLoading, error } = useOrder(orderId);
+  const { data: user, isLoading: isLoadingUser } = useCurrentUser();
+  const { mutate: createPayment, isPending: isPaying } = useCreatePayment();
 
-  if (isLoading) {
+  if (isLoading || isLoadingUser) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center py-12">
@@ -55,6 +60,10 @@ export default function OrderDetailPage() {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const onToken = (token: any) => {
+    createPayment({ token: token.id, orderId: order.id });
   };
 
   return (
@@ -213,6 +222,19 @@ export default function OrderDetailPage() {
           )}
 
           <div className="flex flex-col gap-2">
+            {order.status === 'pending' && order.paymentStatus === 'pending' && (
+              // @ts-ignore
+              <StripeCheckout
+                token={onToken}
+                stripeKey={process.env.NEXT_PUBLIC_STRIPE_KEY || ''}
+                amount={order.total * 100}
+                email={user?.email}
+              >
+                <Button className="w-full" disabled={isPaying}>
+                  {isPaying ? 'Processing...' : 'Pay Now'}
+                </Button>
+              </StripeCheckout>
+            )}
             <Link href="/products" className="w-full">
               <Button variant="outline" className="w-full">
                 Continue Shopping

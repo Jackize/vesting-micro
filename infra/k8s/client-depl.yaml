@@ -23,6 +23,11 @@ spec:
           value: "https://vestify.com"
         - name: NEXT_DISABLE_CACHE
           value: "true"
+        - name: NEXT_PUBLIC_STRIPE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-secrets
+              key: PUBLIC_KEY
 ---
 apiVersion: v1
 kind: Service
