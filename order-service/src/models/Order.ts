@@ -34,10 +34,7 @@ export interface IOrder extends Document {
   total: number;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
-  paymentMethod?: string;
-  paymentIntentId?: string;
   expiresAt: Date;
-  notes?: string;
   createdAt: Date;
   updatedAt: Date;
   isExpired(): boolean;
@@ -191,21 +188,11 @@ const OrderSchema: Schema = new Schema<IOrder>(
       default: PaymentStatus.PENDING,
       index: true,
     },
-    paymentMethod: {
-      type: String,
-    },
-    paymentIntentId: {
-      type: String,
-    },
     expiresAt: {
       type: Date,
       required: true,
       index: true,
-    },
-    notes: {
-      type: String,
-      trim: true,
-    },
+    }
   },
   {
     timestamps: true,

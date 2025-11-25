@@ -34,7 +34,6 @@ export const expirationWorker = new Worker<ExpirationJobData>(
       console.log(
         `   ✅ Order expiration event published for order ${orderNumber}`,
       );
-      console.log(`   📤 Event sent to RabbitMQ queue: order:expired`);
 
       return {
         success: true,

@@ -50,4 +50,8 @@ export enum Exchanges {
    * Product exchange
    */
   Product = "product-exchange",
+  /**
+   * Payment exchange
+   */
+  Payment = "payment-exchange",
 }

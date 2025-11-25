@@ -12,8 +12,8 @@ importers:
         specifier: ^2.0.49
         version: 2.0.49
       '@vestify/shared':
-        specifier: ^1.0.16
-        version: 1.0.16
+        specifier: ^1.0.19
+        version: 1.0.19
       amqplib:
         specifier: ^0.10.9
         version: 0.10.9
@@ -625,8 +625,8 @@ packages:
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
 
-  '@vestify/shared@1.0.16':
-    resolution: {integrity: sha512-RZ4fo/WRwvWHtmgVE10S1vEelzaUGVTanCdAU3en62YMFM0QoSrBFUaxxGq3rBX6HoPtQ+xaF9V2ZOcjhgl73g==}
+  '@vestify/shared@1.0.19':
+    resolution: {integrity: sha512-4jgK0JCn50KjStJrdebDna+iGJuSnGmokkCpOCO5VxFaPl1I63bTor300Ech+zb8r76xOJKprv7ZHXl4Q00XgA==}
     engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
 
   accepts@1.3.8:
@@ -3169,7 +3169,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vestify/shared@1.0.16':
+  '@vestify/shared@1.0.19':
     dependencies:
       amqplib: 0.10.9
       express: 4.21.2

@@ -69,8 +69,6 @@ A modern, scalable, microservice-based e-commerce platform for selling vests wit
 | **Order Service** | Cart, checkout, order tracking |
 | **Payment Service** | Payment processing and integration |
 | **Jobs Service** | Background job processing (order expiration, email, notifications, indexing) using BullMQ |
-| **Review Service** | Ratings, video reviews, and product comments |
-| **Discount Service** | Coupons, promo codes, and referral logic |
 | **Notification Service** | Email, SMS, and push notifications |
 | **Analytics Service** | Collect and process sales data and trends |
 

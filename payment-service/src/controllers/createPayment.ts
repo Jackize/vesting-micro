@@ -1,8 +1,10 @@
 import { CustomError, OrderStatus, PaymentStatus } from "@vestify/shared";
 import { NextFunction, Request, Response } from "express";
 import { stripe } from "../config/stripe";
+import { PaymentSuccessPublisher } from "../events/publishers/payment-success-publisher";
 import Order from "../models/Order";
 import Payment from "../models/Payment";
+import rabbitWrapper from "../rabbitWrapper";
 
 export const createPayment = async (
   req: Request,
@@ -39,6 +41,12 @@ export const createPayment = async (
   await Order.updateOne({ _id: orderId }, { status: OrderStatus.CONFIRMED });
 
   await payment.save();
+
+  await new PaymentSuccessPublisher(rabbitWrapper.channel).publish({
+    id: payment.id,
+    orderId: payment.orderId,
+    paymentIntentId: payment.paymentIntentId,
+  });
 
   res.status(201).send({
     id: payment.id,

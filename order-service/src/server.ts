@@ -1,6 +1,7 @@
 import app from "./app";
 import database from "./config/database";
 import { OrderExpireListener } from "./events/listeners/order-expired-listener";
+import { PaymentSuccessListener } from "./events/listeners/payment-success-listener";
 import { ProductCreatedListener } from "./events/listeners/product-created-listener";
 import { ProductUpdatedListener } from "./events/listeners/product-updated-listener";
 import rabbitWrapper from "./rabbitWrapper";
@@ -62,6 +63,11 @@ const startServer = async (): Promise<void> => {
     // Listen for order expired events
     await new OrderExpireListener(rabbitWrapper.channel).listen(
       "order-svc.order.expired",
+    );
+
+    // Listen for payment success events
+    await new PaymentSuccessListener(rabbitWrapper.channel).listen(
+      "order-svc.payment.success",
     );
 
     // Graceful shutdown handler

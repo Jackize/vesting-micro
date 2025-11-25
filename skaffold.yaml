@@ -47,6 +47,14 @@ build:
         manual:
           - src: "src/**/*.*"
             dest: .
+    - image: payment-service
+      context: ./payment-service
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.*"
+            dest: .
     - image: client
       context: ./frontend
       docker:

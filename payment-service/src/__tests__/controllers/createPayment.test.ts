@@ -2,8 +2,10 @@ import { OrderStatus, PaymentStatus } from "@vestify/shared";
 import mongoose from "mongoose";
 import request from "supertest";
 import app from "../../app";
+import { stripe } from "../../config/stripe";
 import Order from "../../models/Order";
 import Payment from "../../models/Payment";
+import rabbitWrapper from "../../rabbitWrapper";
 import { getUserToken } from "../helpers/testHelpers";
 
 // Mock the stripe configuration
@@ -14,6 +16,9 @@ jest.mock("../../config/stripe", () => ({
     },
   },
 }));
+
+// Mock the rabbitWrapper
+jest.mock("../../rabbitWrapper");
 
 describe("Create Payment Controller", () => {
   // Clear mocks before each test
@@ -107,5 +112,21 @@ describe("Create Payment Controller", () => {
     expect(payment).not.toBeNull();
     expect(payment!.status).toEqual(PaymentStatus.PAID);
     expect(payment!.paymentIntentId).toEqual("ch_test_charge_id");
+
+    const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
+    expect(chargeOptions.amount).toEqual(order.price * 100);
+    expect(chargeOptions.currency).toEqual("usd");
+    expect(chargeOptions.source).toEqual("tok_visa");
+
+    const charge = await (stripe.charges.create as jest.Mock).mock.results[0]
+      .value;
+    expect(payment?.paymentIntentId).toEqual(charge.id);
+
+    expect(rabbitWrapper.channel.publish).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+      expect.any(Buffer),
+      { persistent: true },
+    );
   });
 });

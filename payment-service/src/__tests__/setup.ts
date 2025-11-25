@@ -16,7 +16,7 @@ process.env.CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 process.env.JWT_SECRET =
   process.env.JWT_SECRET || "test-super-secret-jwt-key-for-testing";
 process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
-
+process.env.STRIPE_KEY = "sk_test_";
 let mongoServer: MongoMemoryServer;
 
 // Setup before all tests
