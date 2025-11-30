@@ -15,7 +15,7 @@ export const loginUser = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<Response<any, Record<string, any>> | void> => {
   const { email, password } = req.body;
 
   // Find user and include password field

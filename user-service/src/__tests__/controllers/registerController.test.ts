@@ -1,6 +1,11 @@
 import request from "supertest";
 import app from "../../app";
 
+jest.mock("../../middleware/captcha", () => ({
+  verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
+    next();
+  }),
+}));
 describe("Register Controller", () => {
   describe("POST /api/users/register", () => {
     it("should register a new user successfully", async () => {
@@ -9,6 +14,7 @@ describe("Register Controller", () => {
         password: "Password123",
         firstName: "John",
         lastName: "Doe",
+        captchaToken: "1234567890",
       };
 
       const response = await request(app)
@@ -17,13 +23,16 @@ describe("Register Controller", () => {
         .expect(201);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.message).toBe("User registered successfully");
+      expect(response.body.message).toBe(
+        "User registered successfully. Please check your email to verify your account.",
+      );
       expect(response.body.data.user).toHaveProperty("id");
       expect(response.body.data.user.email).toBe(userData.email);
       expect(response.body.data.user.firstName).toBe(userData.firstName);
       expect(response.body.data.user.lastName).toBe(userData.lastName);
       expect(response.body.data.user.role).toBe("user");
-      expect(response.body.data).toHaveProperty("token");
+      expect(response.body.data).toHaveProperty("accessToken");
+      expect(response.body.data).toHaveProperty("refreshToken");
       expect(response.body.data.user).not.toHaveProperty("password");
     });
 
