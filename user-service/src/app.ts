@@ -28,31 +28,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({
-    success: true,
-    message: "User Service is running",
-    timestamp: new Date().toISOString(),
-    environment: NODE_ENV,
-  });
-});
-
 // API routes
 app.use("/api/users", userRoutes);
-
-// Root endpoint
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "User Service API",
-    version: "1.0.0",
-    endpoints: {
-      health: "/health",
-      users: "/api/users",
-    },
-  });
-});
 
 // 404 handler
 app.use(notFoundHandler);

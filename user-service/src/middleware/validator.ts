@@ -27,6 +27,10 @@ export const validateRegister = [
     .optional()
     .matches(/^\+?[\d\s-()]+$/)
     .withMessage("Please provide a valid phone number"),
+  body("captchaToken")
+    .optional()
+    .isString()
+    .withMessage("CAPTCHA token must be a string"),
   validationRequest,
 ];
 
@@ -37,6 +41,14 @@ export const validateLogin = [
     .withMessage("Please provide a valid email address")
     .normalizeEmail(),
   body("password").notEmpty().withMessage("Password is required"),
+  body("captchaToken")
+    .optional()
+    .isString()
+    .withMessage("CAPTCHA token must be a string"),
+  body("mfaToken")
+    .optional()
+    .isString()
+    .withMessage("MFA token must be a string"),
   validationRequest,
 ];
 
@@ -57,5 +69,69 @@ export const validateUpdateProfile = [
     .matches(/^\+?[\d\s-()]+$/)
     .withMessage("Please provide a valid phone number"),
   body("avatar").optional().isURL().withMessage("Avatar must be a valid URL"),
+  validationRequest,
+];
+
+// Refresh token validation rules
+export const validateRefreshToken = [
+  body("refreshToken")
+    .notEmpty()
+    .withMessage("Refresh token is required")
+    .isString()
+    .withMessage("Refresh token must be a string"),
+  validationRequest,
+];
+
+// Change password validation rules
+export const validateChangePassword = [
+  body("currentPassword")
+    .notEmpty()
+    .withMessage("Current password is required"),
+  body("newPassword")
+    .isLength({ min: 6 })
+    .withMessage("New password must be at least 6 characters long")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage(
+      "New password must contain at least one uppercase letter, one lowercase letter, and one number",
+    )
+    .optional(),
+  validationRequest,
+];
+
+// Forgot password validation rules
+export const validateForgotPassword = [
+  body("email")
+    .isEmail()
+    .withMessage("Please provide a valid email address")
+    .normalizeEmail(),
+  validationRequest,
+];
+
+// Reset password validation rules
+export const validateResetPassword = [
+  body("token").notEmpty().withMessage("Reset token is required"),
+  body("newPassword")
+    .isLength({ min: 6 })
+    .withMessage("New password must be at least 6 characters long")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage(
+      "New password must contain at least one uppercase letter, one lowercase letter, and one number",
+    )
+    .optional(),
+  validationRequest,
+];
+
+// MFA validation rules
+export const validateMfaToken = [
+  body("token")
+    .notEmpty()
+    .withMessage("MFA token is required")
+    .isString()
+    .withMessage("MFA token must be a string"),
+  validationRequest,
+];
+
+export const validateMfaDisable = [
+  body("password").notEmpty().withMessage("Password is required"),
   validationRequest,
 ];

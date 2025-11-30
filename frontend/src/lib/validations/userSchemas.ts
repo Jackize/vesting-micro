@@ -16,6 +16,7 @@ export const registerSchema = z.object({
     .regex(/^\+?[\d\s-()]+$/, 'Please provide a valid phone number')
     .optional()
     .or(z.literal('')),
+  captchaToken: z.string().optional(),
 });
 
 export const loginSchema = z.object({

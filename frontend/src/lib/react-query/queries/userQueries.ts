@@ -54,7 +54,12 @@ export const useRegister = () => {
     mutationFn: (data: RegisterInput) => userApi.register(data),
     onSuccess: async (data) => {
       // Save token to cookie
-      Cookies.set('auth_token', data.token, { expires: 7 }); // 7 days
+      Cookies.set('auth_token', data.accessToken, {
+        expires: new Date(Date.now() + 15 * 60 * 1000),
+      }); // 15 minutes
+      Cookies.set('refresh_token', data.refreshToken, {
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      }); // 7 days
       // Invalidate and refetch current user to get full data from API
       // This ensures we get all fields (phone, isActive, etc.)
       await queryClient.invalidateQueries({ queryKey: userKeys.current() });
@@ -72,9 +77,10 @@ export const useLogin = () => {
     mutationFn: (data: LoginInput) => userApi.login(data),
     onSuccess: async (data) => {
       setUser(data.user);
-      setToken(data.token);
+      setToken(data.accessToken);
       // Save token to cookie
-      Cookies.set('auth_token', data.token, { expires: 7 }); // 7 days
+      Cookies.set('auth_token', data.accessToken, { expires: 7 }); // 7 days
+      Cookies.set('refresh_token', data.refreshToken, { expires: 7 }); // 7 days
       // Invalidate and refetch current user to get full data from API
       // This ensures we get all fields (phone, isActive, etc.)
       await queryClient.invalidateQueries({ queryKey: userKeys.current() });
@@ -108,5 +114,12 @@ export const useDeleteUser = () => {
       // Invalidate user list
       queryClient.invalidateQueries({ queryKey: userKeys.list() });
     },
+  });
+};
+
+// Resend verification email mutation
+export const useResendVerificationEmail = () => {
+  return useMutation({
+    mutationFn: () => userApi.resendVerificationEmail(),
   });
 };

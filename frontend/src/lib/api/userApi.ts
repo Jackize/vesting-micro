@@ -1,21 +1,25 @@
-import apiClient from './client';
 import {
-  RegisterInput,
   LoginInput,
+  RegisterInput,
   UpdateProfileInput,
   User,
   UserListResponse,
 } from '@/types/user';
+import apiClient from './client';
 
 export const userApi = {
   // Register
-  register: async (data: RegisterInput): Promise<{ user: User; token: string }> => {
+  register: async (
+    data: RegisterInput
+  ): Promise<{ user: User; accessToken: string; refreshToken: string }> => {
     const response = await apiClient.post('/users/register', data);
     return response.data.data;
   },
 
   // Login
-  login: async (data: LoginInput): Promise<{ user: User; token: string }> => {
+  login: async (
+    data: LoginInput
+  ): Promise<{ user: User; accessToken: string; refreshToken: string }> => {
     const response = await apiClient.post('/users/login', data);
     return response.data.data;
   },
@@ -52,5 +56,10 @@ export const userApi = {
   // Delete user (admin)
   deleteUser: async (id: string): Promise<void> => {
     await apiClient.delete(`/users/${id}`);
+  },
+
+  // Resend verification email
+  resendVerificationEmail: async (): Promise<void> => {
+    await apiClient.post('/users/resend-verification');
   },
 };

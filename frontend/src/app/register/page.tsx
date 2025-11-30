@@ -1,20 +1,22 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRegister } from '@/lib/react-query/queries/userQueries';
-import { registerSchema, type RegisterFormData } from '@/lib/validations/userSchemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useRouter } from 'next/navigation';
+import { useRegister } from '@/lib/react-query/queries/userQueries';
+import { registerSchema, type RegisterFormData } from '@/lib/validations/userSchemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { useForm } from 'react-hook-form';
 export default function RegisterPage() {
   const router = useRouter();
   const registerMutation = useRegister();
   const [error, setError] = useState<string | null>(null);
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const {
     register,
@@ -28,12 +30,21 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
+      if (!executeRecaptcha) {
+        setError('Captcha is not loaded');
+        return;
+      }
       setError(null);
+      const token = await executeRecaptcha('submit_form');
+      if (!token) {
+        setError('Captcha token is required');
+        return;
+      }
+      data.captchaToken = token;
       // This will trigger refetch of current user data in the mutation's onSuccess
-      await registerMutation.mutateAsync(data);
-      // Navigate to profile - useCurrentUser will have fresh data due to refetchOnMount
-      router.push('/profile');
-      router.refresh();
+      const result = await registerMutation.mutateAsync(data);
+      // Navigate to verification email notification page with user email
+      router.push(`/verify-email-notification?email=${encodeURIComponent(result.user.email)}`);
     } catch (err: unknown) {
       let errorMessage = 'Registration failed. Please try again.';
 
