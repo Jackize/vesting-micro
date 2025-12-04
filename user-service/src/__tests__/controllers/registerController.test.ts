@@ -31,8 +31,8 @@ describe("Register Controller", () => {
       expect(response.body.data.user.firstName).toBe(userData.firstName);
       expect(response.body.data.user.lastName).toBe(userData.lastName);
       expect(response.body.data.user.role).toBe("user");
-      expect(response.body.data).toHaveProperty("accessToken");
-      expect(response.body.data).toHaveProperty("refreshToken");
+      expect(response.body.data.user.isEmailVerified).toBe(false);
+      expect(response.body.data.user.isActive).toBe(false);
       expect(response.body.data.user).not.toHaveProperty("password");
     });
 
