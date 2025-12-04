@@ -16,6 +16,9 @@ describe("Login Controller", () => {
         email: "loginuser@example.com",
         password: "password123",
       });
+      user.isEmailVerified = true;
+      user.isActive = true;
+      await user.save();
     });
 
     it("should login user with valid credentials", async () => {

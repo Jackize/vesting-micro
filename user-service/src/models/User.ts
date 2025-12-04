@@ -80,7 +80,7 @@ const UserSchema: Schema = new Schema<IUser>(
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     lastLogin: {
       type: Date,
