@@ -1,5 +1,5 @@
 import { validationRequest } from "@vestify/shared";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 
 // Register validation rules
 export const validateRegister = [
@@ -104,6 +104,21 @@ export const validateForgotPassword = [
     .isEmail()
     .withMessage("Please provide a valid email address")
     .normalizeEmail(),
+  validationRequest,
+];
+
+// Resend verification email validation rules
+export const validateResendVerification = [
+  body("email")
+    .isEmail()
+    .withMessage("Please provide a valid email address")
+    .normalizeEmail(),
+  validationRequest,
+];
+
+// Verify token reset password validation rules
+export const validateTokenResetPassword = [
+  query("token").notEmpty().withMessage("Reset token is required"),
   validationRequest,
 ];
 

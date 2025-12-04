@@ -150,4 +150,45 @@ export class EmailService {
       text,
     });
   }
+
+  /**
+   * Send password reset email
+   */
+  static async sendPasswordResetSuccessEmail(
+    email: string,
+    firstName: string,
+  ): Promise<void> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Password Reset Success</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #4CAF50;">Password Reset Success</h1>
+            <p>Hi ${firstName},</p>
+            <p>Your password has been reset successfully.</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const text = `
+      Password Reset Success
+
+      Hi ${firstName},
+
+      Your password has been reset successfully.
+    `;
+
+    await this.sendEmail({
+      to: email,
+      subject: "Password Reset Success",
+      html,
+      text,
+    });
+  }
 }
