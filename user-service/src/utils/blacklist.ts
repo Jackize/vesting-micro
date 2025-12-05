@@ -1,8 +1,8 @@
 import { CustomError } from "@vestify/shared/dist/errors/CustomError";
 import jwt from "jsonwebtoken";
 import { redisClient } from "../config/redis";
-const RATE_LIMIT_SEND_PASSWORD_RESET_EMAIL = 3; // 3 times per hour
-const RATE_LIMIT_SEND_PASSWORD_RESET_EMAIL_EXPIRE = 60 * 60; // 1 hour
+const RATE_LIMIT_SEND_EMAIL = 3; // 3 times per hour
+const WINDOW_IN_SECONDS = 60 * 60; // 1 hour
 /**
  * Add token to blacklist
  * @param token - JWT token to blacklist
@@ -78,11 +78,33 @@ export async function checkRateLimitSendPasswordResetEmail(
   try {
     const key = `rate_limit:send_password_reset_email:${email}`;
     const result = await redisClient.get(key);
-    if (result && parseInt(result) >= RATE_LIMIT_SEND_PASSWORD_RESET_EMAIL) {
+    if (result && parseInt(result) >= RATE_LIMIT_SEND_EMAIL) {
       throw new CustomError("Too many requests, please try again later", 429);
     }
     await redisClient.incr(key);
-    await redisClient.expire(key, RATE_LIMIT_SEND_PASSWORD_RESET_EMAIL_EXPIRE);
+    await redisClient.expire(key, WINDOW_IN_SECONDS);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Check rate limit for sending verification email
+ * @param email - Email to check rate limit for
+ * @returns true if rate limit is exceeded, false otherwise
+ */
+export async function checkRateLimitResendVerificationEmail(
+  email: string,
+): Promise<void> {
+  try {
+    const key = `rate_limit:resend_verification_email:${email}`;
+    const result = await redisClient.get(key);
+    console.log("result", result);
+    if (result && parseInt(result) >= RATE_LIMIT_SEND_EMAIL) {
+      throw new CustomError("Too many requests, please try again later", 429);
+    }
+    await redisClient.incr(key);
+    await redisClient.expire(key, WINDOW_IN_SECONDS);
   } catch (error) {
     throw error;
   }

@@ -1,34 +1,36 @@
 import request from "supertest";
 import app from "../../app";
+import { redisClient } from "../../config/redis";
 import EmailVerificationToken from "../../models/EmailVerificationToken";
 import User from "../../models/User";
-import { createTestUser, getAuthToken } from "../helpers/testHelpers";
 jest.mock("../../middleware/captcha", () => ({
   verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
     next();
   }),
 }));
 describe("Email Verification", () => {
+  const testEmail = "test@example.com";
+  const resendVerificationEmailKey = `rate_limit:resend_verification_email:${testEmail}`;
+  let user: any;
+  beforeEach(async () => {
+    await redisClient.set(resendVerificationEmailKey, "0");
+    user = await request(app)
+      .post("/api/users/register")
+      .send({
+        email: testEmail,
+        password: "Password123",
+        firstName: "Test",
+        lastName: "User",
+        captchaToken: "1234567890",
+      })
+      .expect(201);
+    user = user.body.data.user;
+  });
   describe("GET /api/users/verify-email", () => {
     it("should verify email successfully", async () => {
-      // register user
-      await request(app)
-        .post("/api/users/register")
-        .send({
-          email: "test@example.com",
-          password: "Password123",
-          firstName: "Test",
-          lastName: "User",
-          captchaToken: "1234567890",
-        })
-        .expect(201);
-      // find user
-      const user = await User.findOne({ email: "test@example.com" });
-      expect(user).toBeDefined();
-      expect(user?.isEmailVerified).toBe(false);
       // find verification token
       const verificationToken = await EmailVerificationToken.findOne({
-        userId: user?._id?.toString(),
+        userId: user?.id,
       });
       expect(verificationToken).toBeDefined();
       expect(verificationToken?.token).toBeDefined();
@@ -41,12 +43,12 @@ describe("Email Verification", () => {
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe("Email verified successfully");
       // find updated user
-      const updatedUser = await User.findOne({ email: "test@example.com" });
+      const updatedUser = await User.findOne({ email: testEmail });
       expect(updatedUser).toBeDefined();
       expect(updatedUser?.isEmailVerified).toBe(true);
       // find updated verification token
       const updatedVerificationToken = await EmailVerificationToken.findOne({
-        userId: updatedUser?._id?.toString(),
+        userId: user?.id,
       });
       // verify that verification token is deleted
       expect(updatedVerificationToken).toBeNull();
@@ -69,23 +71,15 @@ describe("Email Verification", () => {
     });
 
     it("should not verify email with expired token", async () => {
-      await request(app)
-        .post("/api/users/register")
-        .send({
-          email: "test@example.com",
-          password: "Password123",
-          firstName: "Test",
-          lastName: "User",
-          captchaToken: "1234567890",
-        })
-        .expect(201);
-      const user = await User.findOne({ email: "test@example.com" });
+      // find verification token
       const verificationToken = await EmailVerificationToken.findOne({
-        userId: user?.id?.toString(),
+        userId: user?.id,
       });
       expect(verificationToken).toBeDefined();
+      //   set expiration to past
       verificationToken!.expiresAt = new Date(Date.now() - 1000);
       await verificationToken!.save();
+      //   verify email
       const response = await request(app)
         .get(`/api/users/verify-email?token=${verificationToken?.token}`)
         .expect(400);
@@ -94,58 +88,43 @@ describe("Email Verification", () => {
     });
 
     it("Should not verify email with user not found", async () => {
-      await request(app)
-        .post("/api/users/register")
-        .send({
-          email: "test@example.com",
-          password: "Password123",
-          firstName: "Test",
-          lastName: "User",
-          captchaToken: "1234567890",
-        })
-        .expect(201);
-      const user = await User.findOne({ email: "test@example.com" });
-      expect(user).toBeDefined();
-      expect(user?.isEmailVerified).toBe(false);
       //   delete user
-      await User.deleteOne({ _id: user?._id });
+      await User.deleteOne({ _id: user?.id });
+      //   find verification token
       const verificationToken = await EmailVerificationToken.findOne({
-        userId: user?._id?.toString(),
+        userId: user?.id,
       });
+      // assert that verification token is not deleted
       expect(verificationToken).toBeDefined();
       expect(verificationToken?.token).toBeDefined();
       expect(verificationToken?.expiresAt).toBeDefined();
+      //   verify email
       const response = await request(app)
         .get(`/api/users/verify-email?token=${verificationToken?.token}`)
         .expect(404);
+      //   assert that user is not found
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe("User not found");
     });
 
     it("Should not verify email with already verified user", async () => {
-      await request(app)
-        .post("/api/users/register")
-        .send({
-          email: "test@example.com",
-          password: "Password123",
-          firstName: "Test",
-          lastName: "User",
-          captchaToken: "1234567890",
-        })
-        .expect(201);
-      const user = await User.findOne({ email: "test@example.com" });
-      expect(user).toBeDefined();
-      user!.isEmailVerified = true;
-      await user!.save();
+      //   set user to verified
+      const userSaved = await User.findOne({ email: testEmail });
+      userSaved!.isEmailVerified = true;
+      await userSaved!.save();
+      //   find verification token
       const verificationToken = await EmailVerificationToken.findOne({
-        userId: user?._id?.toString(),
+        userId: user?.id,
       });
+      //   assert that verification token is not deleted
       expect(verificationToken).toBeDefined();
       expect(verificationToken?.token).toBeDefined();
       expect(verificationToken?.expiresAt).toBeDefined();
+      //   verify email
       const response = await request(app)
         .get(`/api/users/verify-email?token=${verificationToken?.token}`)
         .expect(200);
+      //   assert that user is verified
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe("Email is already verified");
     });
@@ -153,76 +132,71 @@ describe("Email Verification", () => {
 
   describe("POST /api/users/resend-verification", () => {
     it("Should resend verification email successfully", async () => {
-      // register user
-      await request(app)
-        .post("/api/users/register")
-        .send({
-          email: "test@example.com",
-          password: "Password123",
-          firstName: "Test",
-          lastName: "User",
-          captchaToken: "1234567890",
-        })
-        .expect(201);
-      //   verify that user is not verified
-      const user = await User.findOne({ email: "test@example.com" });
-      expect(user).toBeDefined();
-      expect(user?.isEmailVerified).toBe(false);
       //   find verification token
       const verificationToken = await EmailVerificationToken.findOne({
-        userId: user?._id?.toString(),
+        userId: user?.id,
       });
       expect(verificationToken).toBeDefined();
       expect(verificationToken?.token).toBeDefined();
       expect(verificationToken?.expiresAt).toBeDefined();
-      //    login user
-      const loginResponse = await request(app)
-        .post("/api/users/login")
-        .send({
-          email: "test@example.com",
-          password: "Password123",
-        })
-        .expect(200);
-      const accessToken = loginResponse.body.data.accessToken;
+      //   set expiration to past
+      verificationToken!.expiresAt = new Date(Date.now() - 5 * 60 * 1000); // 5 minutes ago
+      await verificationToken!.save();
       //   resend verification email
       const response = await request(app)
         .post("/api/users/resend-verification")
-        .set("Authorization", `Bearer ${accessToken}`)
-        .expect(200);
+        .send({ email: testEmail });
+      //   assert that verification email is sent successfully
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe(
         "Verification email sent successfully",
       );
-      //   verify that verification token is deleted
+      //   verify that a new verification token was created
       const updatedVerificationTokens = await EmailVerificationToken.find({
-        userId: user?._id?.toString(),
+        userId: user.id,
       });
       expect(updatedVerificationTokens).toHaveLength(1);
     });
 
     it("Should not resend verification email with not found user", async () => {
-      const user = await createTestUser();
-      const accessToken = await getAuthToken(user);
-      await User.deleteOne({ _id: user._id });
       const response = await request(app)
         .post("/api/users/resend-verification")
-        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ email: "test1@example.com" })
         .expect(404);
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe("User not found");
     });
 
     it("Should not resend verification email with already verified user", async () => {
-      const user = await createTestUser();
-      user!.isEmailVerified = true;
-      await user!.save();
-      const accessToken = await getAuthToken(user);
+      const userSaved = await User.findOne({ email: testEmail });
+      userSaved!.isEmailVerified = true;
+      await userSaved!.save();
       const response = await request(app)
         .post("/api/users/resend-verification")
-        .set("Authorization", `Bearer ${accessToken}`)
+        .send({ email: testEmail })
         .expect(200);
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe("Email is already verified");
+    });
+
+    it("Should not resend verification email with too many requests", async () => {
+      await redisClient.set(resendVerificationEmailKey, "3");
+      const response = await request(app)
+        .post("/api/users/resend-verification")
+        .send({ email: testEmail })
+        .expect(429);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toContain("Too many requests");
+    });
+
+    it("Should not resend verification email with too soon since last send", async () => {
+      await redisClient.set(resendVerificationEmailKey, "1");
+      const response = await request(app)
+        .post("/api/users/resend-verification")
+        .send({ email: testEmail })
+        .expect(429);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toContain("Please wait");
     });
   });
 });
