@@ -1,5 +1,6 @@
 'use client';
 
+import VerifyLoginAlready from '@/components/auth/VerifyLoginAlready';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
@@ -28,7 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           appendTo: 'head',
         }}
       >
-        {children}
+        <VerifyLoginAlready>{children}</VerifyLoginAlready>
       </GoogleReCaptchaProvider>
     </QueryClientProvider>
   );

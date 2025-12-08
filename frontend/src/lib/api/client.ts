@@ -30,10 +30,13 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ success?: boolean; message?: string; error?: string }>) => {
-    // Only redirect on 401 for protected routes, not for login/register
+    // Only redirect on 401 for protected routes, not for login/register/change-password
     if (error.response?.status === 401) {
       const requestUrl = error.config?.url || '';
-      const isAuthEndpoint = requestUrl.includes('/login') || requestUrl.includes('/register');
+      const isAuthEndpoint =
+        requestUrl.includes('/login') ||
+        requestUrl.includes('/register') ||
+        requestUrl.includes('/change-password');
 
       if (!isAuthEndpoint) {
         // Unauthorized on protected routes - clear token and redirect to login

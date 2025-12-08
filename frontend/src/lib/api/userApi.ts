@@ -1,4 +1,5 @@
 import {
+  ChangePasswordInput,
   LoginInput,
   RegisterInput,
   UpdateProfileInput,
@@ -59,7 +60,15 @@ export const userApi = {
   },
 
   // Resend verification email
-  resendVerificationEmail: async (): Promise<void> => {
-    await apiClient.post('/users/resend-verification');
+  resendVerificationEmail: async (email: string): Promise<void> => {
+    await apiClient.post('/users/resend-verification', { email });
+  },
+
+  // Change password
+  changePassword: async (
+    data: ChangePasswordInput
+  ): Promise<{ success: true; message: string }> => {
+    const response = await apiClient.put('/users/change-password', data);
+    return response.data;
   },
 };

@@ -34,6 +34,11 @@ export interface UpdateProfileInput {
   avatar?: string;
 }
 
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface UserListResponse {
   users: User[];
   pagination: {

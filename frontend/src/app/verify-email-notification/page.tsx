@@ -10,14 +10,15 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useResendVerificationEmail } from '@/lib/react-query/queries/userQueries';
+import { useAuthStore } from '@/lib/store/authStore';
 import { CheckCircle2, Mail, RefreshCw } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-
 export default function VerifyEmailNotificationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
+  const { user: currentUser } = useAuthStore();
   const [resendSuccess, setResendSuccess] = useState(false);
   const [resendError, setResendError] = useState<string | null>(null);
   const resendMutation = useResendVerificationEmail();
@@ -26,7 +27,14 @@ export default function VerifyEmailNotificationPage() {
     try {
       setResendError(null);
       setResendSuccess(false);
-      await resendMutation.mutateAsync();
+
+      const emailToUse = email || currentUser?.email;
+      if (!emailToUse) {
+        setResendError('Email address is required');
+        return;
+      }
+
+      await resendMutation.mutateAsync(emailToUse);
       setResendSuccess(true);
       // Clear success message after 5 seconds
       setTimeout(() => setResendSuccess(false), 5000);

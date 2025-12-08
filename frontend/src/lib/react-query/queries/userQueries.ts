@@ -1,6 +1,6 @@
 import { userApi } from '@/lib/api/userApi';
 import { useAuthStore } from '@/lib/store/authStore';
-import { LoginInput, RegisterInput, UpdateProfileInput } from '@/types/user';
+import { ChangePasswordInput, LoginInput, RegisterInput, UpdateProfileInput } from '@/types/user';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
@@ -120,6 +120,22 @@ export const useDeleteUser = () => {
 // Resend verification email mutation
 export const useResendVerificationEmail = () => {
   return useMutation({
-    mutationFn: () => userApi.resendVerificationEmail(),
+    mutationFn: (email: string) => userApi.resendVerificationEmail(email),
+  });
+};
+
+// Change password mutation
+export const useChangePassword = () => {
+  const logout = useAuthStore((state) => state.logout);
+
+  return useMutation({
+    mutationFn: (data: ChangePasswordInput) => userApi.changePassword(data),
+    onSuccess: () => {
+      // After password change, all sessions are logged out on backend
+      // Clear tokens and logout user
+      Cookies.remove('auth_token');
+      Cookies.remove('refresh_token');
+      logout();
+    },
   });
 };
