@@ -1,3 +1,5 @@
+import { DeviceInfo } from "../utils/deviceInfo";
+
 /**
  * Email service for sending emails
  * TODO: Integrate with jobs-service email queue via RabbitMQ
@@ -187,6 +189,54 @@ export class EmailService {
     await this.sendEmail({
       to: email,
       subject: "Password Reset Success",
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Send change password success email
+   */
+  static async sendChangePasswordSuccessEmail(
+    email: string,
+    firstName: string,
+    device: DeviceInfo,
+  ): Promise<void> {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Change Password Success</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #4CAF50;">Change Password Success</h1>
+            <p>Hi ${firstName},</p>
+            <p>Your password has been changed successfully.</p>
+            <p>Device: ${device.deviceType}</p>
+            <p>IP Address: ${device.ip}</p>
+            <p>User Agent: ${device.userAgent}</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const text = `
+      Change Password Success
+
+      Hi ${firstName},
+
+      Your password has been changed successfully.
+      Device: ${device.deviceType}
+      IP Address: ${device.ip}
+      User Agent: ${device.userAgent}
+    `;
+
+    await this.sendEmail({
+      to: email,
+      subject: "Change Password Success",
       html,
       text,
     });

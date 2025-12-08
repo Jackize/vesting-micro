@@ -12,10 +12,12 @@ export const createTestUser = async (userData?: {
 }): Promise<IUser> => {
   const defaultUser = {
     email: `test${Math.random().toString(36).substring(7)}@example.com`,
-    password: "password123",
+    password: "Password@123",
     firstName: "Test",
     lastName: "User",
     role: "user" as const,
+    isActive: true,
+    isEmailVerified: true,
     ...userData,
   };
 

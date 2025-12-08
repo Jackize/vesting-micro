@@ -18,6 +18,7 @@ export interface IUser extends Document {
   mfaEnabled: boolean;
   mfaSecret?: string;
   mfaBackupCodes?: string[];
+  passwordChangedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -111,6 +112,10 @@ const UserSchema: Schema = new Schema<IUser>(
     mfaBackupCodes: {
       type: [String],
       select: false, // Don't return backup codes by default
+    },
+    passwordChangedAt: {
+      type: Date,
+      default: null,
     },
   },
   {
