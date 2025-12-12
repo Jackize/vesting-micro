@@ -2,11 +2,7 @@ import request from "supertest";
 import app from "../../app";
 import LoginHistory from "../../models/LoginHistory";
 import { createTestUser, loginUser } from "../helpers/testHelpers";
-jest.mock("../../middleware/captcha", () => ({
-  verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
-    next();
-  }),
-}));
+jest.mock("../../middleware/captcha");
 describe("Login Controller", () => {
   describe("POST /api/users/login", () => {
     let user: any;

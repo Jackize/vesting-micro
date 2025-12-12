@@ -54,6 +54,7 @@ export const verifyEmail = async (
 
     // Verify email
     user.isEmailVerified = true;
+    user.isActive = true;
     await user.save();
 
     // Delete verification token
@@ -84,7 +85,12 @@ export const resendVerificationEmail = async (
     const user = await User.findByEmail(email);
 
     if (!user) {
-      throw new CustomError("User not found", 404);
+      // Don't reveal if user exists or not (security best practice)
+      return res.json({
+        success: true,
+        message:
+          "If an account with that email exists, a verification email has been sent.",
+      });
     }
 
     // Check if already verified

@@ -99,7 +99,6 @@ export async function checkRateLimitResendVerificationEmail(
   try {
     const key = `rate_limit:resend_verification_email:${email}`;
     const result = await redisClient.get(key);
-    console.log("result", result);
     if (result && parseInt(result) >= RATE_LIMIT_SEND_EMAIL) {
       throw new CustomError("Too many requests, please try again later", 429);
     }

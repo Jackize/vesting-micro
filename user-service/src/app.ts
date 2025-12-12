@@ -10,7 +10,6 @@ import userRoutes from "./routes/userRoutes";
 dotenv.config();
 
 const app: Application = express();
-const NODE_ENV = process.env.NODE_ENV || "development";
 
 // Security middleware
 app.use(helmet());

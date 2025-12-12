@@ -5,11 +5,7 @@ import PasswordResetToken from "../../models/PasswordResetToken";
 import User from "../../models/User";
 import { checkRateLimitSendPasswordResetEmail } from "../../utils/blacklist";
 import { createTestUser } from "../helpers/testHelpers";
-jest.mock("../../middleware/captcha", () => ({
-  verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
-    next();
-  }),
-}));
+jest.mock("../../middleware/captcha");
 describe("PasswordResetController", () => {
   const testEmail = "test@example.com";
   const key = `rate_limit:send_password_reset_email:${testEmail}`;

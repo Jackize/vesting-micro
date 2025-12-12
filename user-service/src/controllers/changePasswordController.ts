@@ -83,13 +83,11 @@ export const changePassword = async (
 
     // Blacklist current access token if available
     if (accessToken) {
-      console.log(accessToken);
       const decoded = jwt.decode(accessToken) as jwt.JwtPayload | null;
       if (decoded && decoded.exp) {
         const currentTime = Math.floor(Date.now() / 1000);
         const expiresIn = decoded.exp - currentTime;
         if (expiresIn > 0) {
-          console.log(expiresIn);
           await addToBlacklist(accessToken, expiresIn);
         }
       }

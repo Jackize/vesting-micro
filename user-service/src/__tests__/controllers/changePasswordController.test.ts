@@ -2,13 +2,8 @@ import request from "supertest";
 import app from "../../app";
 import RefreshToken from "../../models/RefreshToken";
 import User from "../../models/User";
-import { removeFromBlacklist } from "../../utils/blacklist";
 import { createTestUser, getAuthToken } from "../helpers/testHelpers";
-jest.mock("../../middleware/captcha", () => ({
-  verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
-    next();
-  }),
-}));
+jest.mock("../../middleware/captcha");
 describe("Change Password Controller", () => {
   it("should change password successfully", async () => {
     const user = await createTestUser();
@@ -158,15 +153,7 @@ describe("Change Password Controller", () => {
     expect(response.body.success).toBe(true);
 
     // check the old refresh tokens are available to be used
-    const refreshTokenResponse2 = await request(app)
-      .get("/api/users/me")
-      .set(
-        "Authorization",
-        `Bearer ${refreshTokenResponse.body.data.accessToken}`,
-      )
-      .expect(401);
-    expect(refreshTokenResponse2.body.success).toBe(false);
-    expect(refreshTokenResponse2.body.error).toBe("Token has been revoked");
-    await removeFromBlacklist(refreshTokenResponse.body.data.accessToken);
+    const refreshTokenAfterChange = await RefreshToken.findByUserId(user.id);
+    expect(refreshTokenAfterChange.length).toBe(0);
   });
 });

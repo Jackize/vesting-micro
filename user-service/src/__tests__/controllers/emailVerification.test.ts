@@ -3,11 +3,7 @@ import app from "../../app";
 import { redisClient } from "../../config/redis";
 import EmailVerificationToken from "../../models/EmailVerificationToken";
 import User from "../../models/User";
-jest.mock("../../middleware/captcha", () => ({
-  verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
-    next();
-  }),
-}));
+jest.mock("../../middleware/captcha");
 describe("Email Verification", () => {
   const testEmail = "test@example.com";
   const resendVerificationEmailKey = `rate_limit:resend_verification_email:${testEmail}`;
@@ -162,9 +158,11 @@ describe("Email Verification", () => {
       const response = await request(app)
         .post("/api/users/resend-verification")
         .send({ email: "test1@example.com" })
-        .expect(404);
-      expect(response.body.success).toBe(false);
-      expect(response.body.error).toBe("User not found");
+        .expect(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.message).toBe(
+        "If an account with that email exists, a verification email has been sent.",
+      );
     });
 
     it("Should not resend verification email with already verified user", async () => {

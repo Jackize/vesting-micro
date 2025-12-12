@@ -3,11 +3,7 @@ import app from "../../app";
 import User from "../../models/User";
 import { createTestUser } from "../helpers/testHelpers";
 
-jest.mock("../../middleware/captcha", () => ({
-  verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
-    next();
-  }),
-}));
+jest.mock("../../middleware/captcha");
 describe("Refresh Controller", () => {
   describe("POST /api/users/refresh", () => {
     let user: any;

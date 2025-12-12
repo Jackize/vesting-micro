@@ -1,11 +1,7 @@
 import request from "supertest";
 import app from "../../app";
 
-jest.mock("../../middleware/captcha", () => ({
-  verifyCaptcha: jest.fn().mockImplementation((req, res, next) => {
-    next();
-  }),
-}));
+jest.mock("../../middleware/captcha");
 describe("Register Controller", () => {
   describe("POST /api/users/register", () => {
     it("should register a new user successfully", async () => {
