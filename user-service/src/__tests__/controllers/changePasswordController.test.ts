@@ -135,14 +135,6 @@ describe("Change Password Controller", () => {
         captchaToken: "1234567890",
       })
       .expect(200);
-    const refreshTokenResponse = await request(app)
-      .post("/api/users/login")
-      .send({
-        email: user.email,
-        password: "Password@123",
-        captchaToken: "1234567890",
-      })
-      .expect(200);
     const refreshTokens = await RefreshToken.findByUserId(user.id);
     expect(refreshTokens.length).toBe(2);
     const response = await request(app)

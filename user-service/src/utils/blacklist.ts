@@ -75,17 +75,13 @@ export async function removeFromBlacklist(token: string): Promise<void> {
 export async function checkRateLimitSendPasswordResetEmail(
   email: string,
 ): Promise<void> {
-  try {
-    const key = `rate_limit:send_password_reset_email:${email}`;
-    const result = await redisClient.get(key);
-    if (result && parseInt(result) >= RATE_LIMIT_SEND_EMAIL) {
-      throw new CustomError("Too many requests, please try again later", 429);
-    }
-    await redisClient.incr(key);
-    await redisClient.expire(key, WINDOW_IN_SECONDS);
-  } catch (error) {
-    throw error;
+  const key = `rate_limit:send_password_reset_email:${email}`;
+  const result = await redisClient.get(key);
+  if (result && parseInt(result) >= RATE_LIMIT_SEND_EMAIL) {
+    throw new CustomError("Too many requests, please try again later", 429);
   }
+  await redisClient.incr(key);
+  await redisClient.expire(key, WINDOW_IN_SECONDS);
 }
 
 /**
@@ -96,15 +92,11 @@ export async function checkRateLimitSendPasswordResetEmail(
 export async function checkRateLimitResendVerificationEmail(
   email: string,
 ): Promise<void> {
-  try {
-    const key = `rate_limit:resend_verification_email:${email}`;
-    const result = await redisClient.get(key);
-    if (result && parseInt(result) >= RATE_LIMIT_SEND_EMAIL) {
-      throw new CustomError("Too many requests, please try again later", 429);
-    }
-    await redisClient.incr(key);
-    await redisClient.expire(key, WINDOW_IN_SECONDS);
-  } catch (error) {
-    throw error;
+  const key = `rate_limit:resend_verification_email:${email}`;
+  const result = await redisClient.get(key);
+  if (result && parseInt(result) >= RATE_LIMIT_SEND_EMAIL) {
+    throw new CustomError("Too many requests, please try again later", 429);
   }
+  await redisClient.incr(key);
+  await redisClient.expire(key, WINDOW_IN_SECONDS);
 }
