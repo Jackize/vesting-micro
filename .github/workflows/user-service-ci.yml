@@ -93,12 +93,10 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: |
             user-service/pnpm-lock.yaml
-            shared/pnpm-lock.yaml
 
       - name: Install dependencies
         run: |
           pnpm install --frozen-lockfile
-          cd ../shared && pnpm install --frozen-lockfile && cd ../user-service
 
       - name: Build project
         run: pnpm build
