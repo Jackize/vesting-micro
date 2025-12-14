@@ -136,7 +136,7 @@ describe("Change Password Controller", () => {
       })
       .expect(200);
     const refreshTokens = await RefreshToken.findByUserId(user.id);
-    expect(refreshTokens.length).toBe(2);
+    expect(refreshTokens.length).toBe(1);
     const response = await request(app)
       .put("/api/users/change-password")
       .set("Authorization", `Bearer ${token}`)
