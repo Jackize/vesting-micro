@@ -39,15 +39,13 @@ beforeAll(async () => {
   }
 });
 
-// Cleanup after each test
-afterEach(async () => {
-  try {
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-      await collections[key].deleteMany({});
+beforeEach(async () => {
+  jest.clearAllMocks();
+  if (mongoose.connection.db) {
+    const collections = await mongoose.connection.db.collections();
+    for (const collection of collections) {
+      await collection.deleteMany({});
     }
-  } catch (error) {
-    console.error("Error cleaning up test data:", error);
   }
 });
 
