@@ -24,7 +24,7 @@ spec:
         - name: RABBITMQ_URL
           value: "amqp://rabbitmq-srv:5672"
         - name: REDIS_HOST
-          value: job-redis-srv
+          value: redis-srv
         - name: REDIS_PORT
           value: "6379"
 ---
