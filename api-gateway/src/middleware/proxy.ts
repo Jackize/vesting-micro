@@ -13,7 +13,7 @@ export const createServiceProxy = (serviceConfig: ServiceConfig) => {
     timeout: serviceConfig.timeout || 10000,
     pathRewrite: {
       // Keep the path as is, services handle their own routing
-      "^/api": "/api",
+      "^/api": "/",
     },
     onError: (err: Error, req: Request, res: Response) => {
       console.error(`Proxy error for ${serviceConfig.name}:`, err);
@@ -26,6 +26,14 @@ export const createServiceProxy = (serviceConfig: ServiceConfig) => {
       }
     },
     onProxyReq: (proxyReq, req: Request) => {
+      if (req.body && typeof req.body === "object") {
+        const bodyData = JSON.stringify(req.body);
+
+        proxyReq.setHeader("Content-Type", "application/json");
+        proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+
+        proxyReq.write(bodyData);
+      }
       // Forward original headers
       if (req.headers["x-forwarded-for"]) {
         proxyReq.setHeader("x-forwarded-for", req.headers["x-forwarded-for"]);
@@ -53,6 +61,7 @@ export const createServiceProxy = (serviceConfig: ServiceConfig) => {
   return createProxyMiddleware(proxyOptions);
 };
 
+const proxyCache = new Map<string, any>();
 /**
  * Dynamic proxy middleware that routes to appropriate service
  */
@@ -62,14 +71,14 @@ export const serviceProxy = (
   next: NextFunction,
 ) => {
   const serviceConfig = getServiceByRoute(req.path);
-
   if (!serviceConfig) {
     return next(
       new CustomError(`No service found for route: ${req.path}`, 404),
     );
   }
-
+  if (!proxyCache.has(serviceConfig.name)) {
+    proxyCache.set(serviceConfig.name, createServiceProxy(serviceConfig));
+  }
   // Create proxy middleware for this request
-  const proxy = createServiceProxy(serviceConfig);
-  proxy(req, res, () => next());
+  return proxyCache.get(serviceConfig.name)(req, res, () => next());
 };

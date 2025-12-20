@@ -60,6 +60,10 @@ const healthHandler = (req: express.Request, res: express.Response) => {
 app.get("/health", healthHandler);
 app.get("/health/services", servicesHealthHandler);
 
+// Health check endpoints (for external access through ingress /api/*)
+app.get("/api/health", healthHandler);
+app.get("/api/health/services", servicesHealthHandler);
+
 // Attach service name to request
 app.use(attachServiceName);
 

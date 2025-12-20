@@ -3,31 +3,31 @@ import { getServiceByRoute, services } from "../../config/services";
 describe("Service Configuration", () => {
   describe("getServiceByRoute", () => {
     it("should return user service for /api/users route", () => {
-      const service = getServiceByRoute("/api/users/login");
+      const service = getServiceByRoute("/users/login");
       expect(service).toBeDefined();
       expect(service?.name).toBe("user-service");
     });
 
     it("should return product service for /api/products route", () => {
-      const service = getServiceByRoute("/api/products/123");
+      const service = getServiceByRoute("/products/123");
       expect(service).toBeDefined();
       expect(service?.name).toBe("product-service");
     });
 
     it("should return order service for /api/orders route", () => {
-      const service = getServiceByRoute("/api/orders");
+      const service = getServiceByRoute("/orders");
       expect(service).toBeDefined();
       expect(service?.name).toBe("order-service");
     });
 
     it("should return payment service for /api/payments route", () => {
-      const service = getServiceByRoute("/api/payments/checkout");
+      const service = getServiceByRoute("/payments/checkout");
       expect(service).toBeDefined();
       expect(service?.name).toBe("payment-service");
     });
 
     it("should return null for unknown route", () => {
-      const service = getServiceByRoute("/api/unknown");
+      const service = getServiceByRoute("/unknown");
       expect(service).toBeNull();
     });
   });

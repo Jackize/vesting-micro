@@ -1,4 +1,6 @@
+import dotenv from "dotenv";
 import express from "express";
+dotenv.config();
 /**
  * Service configuration for API Gateway
  * Maps route prefixes to microservice URLs
@@ -40,12 +42,14 @@ export const services: Record<string, ServiceConfig> = {
 
 /**
  * Route to service mapping
+ * Note: Paths don't include /api prefix because Express strips it
+ * when middleware is mounted at /api (app.use("/api", serviceProxy))
  */
 export const routeToService: Record<string, string> = {
-  "/api/users": "users",
-  "/api/products": "products",
-  "/api/orders": "orders",
-  "/api/payments": "payments",
+  "/users": "users",
+  "/products": "products",
+  "/orders": "orders",
+  "/payments": "payments",
 };
 
 /**
