@@ -10,34 +10,15 @@ spec:
   - host: vestify.com
     http:
       paths:
-      - path: /api/users/?(.*)
+      # All API requests go through API Gateway
+      - path: /api/?(.*)
         pathType: ImplementationSpecific
         backend:
           service:
-            name: user-srv
+            name: api-gateway-srv
             port:
-              number: 3001
-      - path: /api/products/?(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: product-srv
-            port:
-              number: 3001
-      - path: /api/orders/?(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: order-srv
-            port:
-              number: 3001
-      - path: /api/payments/?(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: payment-srv
-            port:
-              number: 3001
+              number: 3000
+      # Frontend routes
       - path: /?(.*)
         pathType: ImplementationSpecific
         backend:

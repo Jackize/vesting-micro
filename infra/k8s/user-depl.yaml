@@ -36,13 +36,26 @@ spec:
           value: "7d"
         - name: CORS_ORIGIN
           value: "http://vestify.com"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        - name: RABBITMQ_URL
+          value: "amqp://rabbitmq-srv:5672"
+        - name: REDIS_HOST
+          value: "redis-srv"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: RECAPTCHA_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: user-secrets
+              key: RECAPTCHA_SECRET_KEY
+        - name: SKIP_CAPTCHA
+          value: "true"
+        # resources:
+        #   requests:
+        #     memory: "256Mi"
+        #     cpu: "250m"
+        #   limits:
+        #     memory: "512Mi"
+        #     cpu: "500m"
         livenessProbe:
           httpGet:
             path: /health

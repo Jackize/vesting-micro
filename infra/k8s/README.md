@@ -15,12 +15,13 @@ This folder serves as the **infrastructure-as-code** layer for the Vestify appli
 All manifests in this directory are automatically deployed by **Skaffold** during development, making this a single source of truth for the development environment infrastructure.
 
 ## Files Overview
-
+- `api-gateway-depl.yaml` - API gateway deployment and service (Node.js API)
 - `user-depl.yaml` - User service deployment and service (Node.js API)
 - `user-mongo-depl.yaml` - MongoDB deployment and service for user data storage
 - `client-depl.yaml` - Frontend Next.js client deployment (development mode)
 - `ingress-srv.yaml` - NGINX Ingress configuration for routing external traffic
 - `user-secrets.yaml` - Kubernetes secrets for user service (JWT_SECRET)
+- `redis-depl.yaml` - Redis deployment
 
 ## Prerequisites
 

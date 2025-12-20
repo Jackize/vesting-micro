@@ -11,14 +11,6 @@ export const errorHandler = (
   let error = { ...err } as AppError;
   error.message = err.message;
 
-  // Log error for debugging
-  console.error("Error:", {
-    message: err.message,
-    stack: process.env.NODE_ENV !== "production" ? err.stack : undefined,
-    url: req.originalUrl,
-    method: req.method,
-  });
-
   // Mongoose bad ObjectId
   if (err.name === "CastError") {
     const message = "Resource not found";
