@@ -41,8 +41,11 @@ pnpm install
 Create a `.env.local` file:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
+# API Gateway URL - single entry point for all microservices
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
+
+**Note**: The frontend now connects to the API Gateway (port 3000) instead of individual microservices. The gateway handles routing to the appropriate service.
 
 ## Development
 
@@ -125,12 +128,21 @@ frontend/
 
 ## API Integration
 
-The frontend integrates with the user-service API:
+The frontend integrates with all microservices through the **API Gateway**:
 
-- **Base URL**: Configured via `NEXT_PUBLIC_API_URL`
-- **Authentication**: JWT tokens stored in HTTP-only cookies
+- **Base URL**: Configured via `NEXT_PUBLIC_API_URL` (default: `http://localhost:3000`)
+- **API Gateway**: Single entry point that routes requests to appropriate microservices
+  - `/api/users/*` → User Service
+  - `/api/products/*` → Product Service
+  - `/api/orders/*` → Order Service
+  - `/api/payments/*` → Payment Service
+- **Authentication**: JWT tokens stored in cookies, automatically added to requests
 - **Data Fetching**: React Query for server state management
-- **Error Handling**: Centralized error handling in API client
+- **Error Handling**: Centralized error handling with support for:
+  - Rate limiting (429)
+  - Unauthorized (401)
+  - Service unavailable (503)
+  - Request ID tracking for debugging
 
 ## Pages
 

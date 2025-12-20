@@ -25,6 +25,12 @@ export const userApi = {
     return response.data.data;
   },
 
+  // Refresh token
+  refreshToken: async (refreshToken: string): Promise<{ accessToken: string }> => {
+    const response = await apiClient.post('/users/refresh', { refreshToken });
+    return response.data.data;
+  },
+
   // Get current user
   getCurrentUser: async (): Promise<User> => {
     const response = await apiClient.get('/users/me');

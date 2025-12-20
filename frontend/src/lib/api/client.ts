@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import Cookies from 'js-cookie';
+import { userApi } from './userApi';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -28,32 +29,68 @@ apiClient.interceptors.request.use(
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError<{ success?: boolean; message?: string; error?: string }>) => {
-    // Only redirect on 401 for protected routes, not for login/register/change-password
-    if (error.response?.status === 401) {
-      const requestUrl = error.config?.url || '';
-      const isAuthEndpoint =
-        requestUrl.includes('/login') ||
-        requestUrl.includes('/register') ||
-        requestUrl.includes('/change-password');
+  (response) => {
+    // Store request ID from gateway if present
+    const requestId = response.headers['x-request-id'];
+    if (requestId && typeof window !== 'undefined') {
+      // Can be used for debugging/logging
+      (response.config as any).requestId = requestId;
+    }
+    return response;
+  },
+  async (
+    error: AxiosError<{ success?: boolean; message?: string; error?: string; code?: string }>
+  ) => {
+    const status = error.response?.status;
+    // Handle rate limiting (429)
+    if (status === 429) {
+      return Promise.reject(
+        new Error(error.response?.data?.message || 'Too many requests. Please try again later.')
+      );
+    }
 
-      if (!isAuthEndpoint) {
-        // Unauthorized on protected routes - clear token and redirect to login
-        Cookies.remove('auth_token');
+    // Handle unauthorized (401)
+    if (status === 401) {
+      // debugger;
+      // Try to refresh token
+      const refreshToken = Cookies.get('refresh_token');
+      if (refreshToken) {
+        userApi
+          .refreshToken(refreshToken)
+          .then((res) => {
+            Cookies.set('auth_token', res.accessToken, { expires: 7 });
+          })
+          .catch((err) => {
+            console.log('err', err);
+            if (typeof window !== 'undefined') {
+              Cookies.remove('auth_token');
+              Cookies.remove('refresh_token');
+            }
+          });
+      } else {
+        // If refresh token is not available, redirect to login
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          Cookies.remove('auth_token');
+          Cookies.remove('refresh_token');
         }
       }
     }
 
+    // Handle service unavailable (503)
+    if (status === 503) {
+      return Promise.reject(
+        new Error(
+          error.response?.data?.message ||
+            'Service is temporarily unavailable. Please try again later.'
+        )
+      );
+    }
+
     // Extract error message from response
     if (error.response?.data) {
-      const errorMessage =
-        error.response.data.error || error.response.data.message || error.message;
-      const customError = new Error(errorMessage);
-      (customError as any).response = error.response;
-      return Promise.reject(customError);
+      return Promise.reject(
+        new Error(error.response.data.error || error.response.data.message || error.message)
+      );
     }
 
     return Promise.reject(error);
