@@ -11,10 +11,6 @@ export const createServiceProxy = (serviceConfig: ServiceConfig) => {
     target: serviceConfig.url,
     changeOrigin: true,
     timeout: serviceConfig.timeout || 10000,
-    pathRewrite: {
-      // Keep the path as is, services handle their own routing
-      "^/api": "/",
-    },
     onError: (err: Error, req: Request, res: Response) => {
       console.error(`Proxy error for ${serviceConfig.name}:`, err);
       if (!res.headersSent) {
