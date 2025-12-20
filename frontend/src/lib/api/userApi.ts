@@ -31,6 +31,12 @@ export const userApi = {
     return response.data.data;
   },
 
+  // Verify email
+  verifyEmail: async (token: string): Promise<{ success: true; message: string }> => {
+    const response = await apiClient.get(`/users/verify-email?token=${token}`);
+    return response.data;
+  },
+
   // Get current user
   getCurrentUser: async (): Promise<User> => {
     const response = await apiClient.get('/users/me');

@@ -9,37 +9,39 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import apiClient from '@/lib/api/client';
+import { userApi } from '@/lib/api/userApi';
 import { CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState<string>('');
+  const hasVerified = useRef(false);
 
   useEffect(() => {
+    if (hasVerified.current) {
+      return;
+    }
+    hasVerified.current = true;
     const verifyEmail = async () => {
-      if (!token) {
-        setStatus('error');
-        setMessage('Verification token is missing');
-        return;
-      }
+      if (token === null) return;
 
       try {
-        const response = await apiClient.get(`/users/verify-email?token=${token}`);
-        setStatus('success');
-        setMessage(response.data.message || 'Email verified successfully!');
+        const response = await userApi.verifyEmail(token);
+        if (response.success) {
+          setStatus('success');
+          setMessage(response.message || 'Email verified successfully!');
+        } else {
+          setStatus('error');
+          setMessage(response.message || 'Failed to verify email. The link may have expired.');
+        }
       } catch (error: any) {
         setStatus('error');
-        setMessage(
-          error.response?.data?.error?.message ||
-            error.message ||
-            'Failed to verify email. The link may have expired.'
-        );
+        setMessage(error.message || 'Failed to verify email. The link may have expired.');
       }
     };
 
