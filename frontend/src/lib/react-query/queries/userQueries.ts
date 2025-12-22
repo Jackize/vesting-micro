@@ -139,3 +139,28 @@ export const useChangePassword = () => {
     },
   });
 };
+
+// Forgot password mutation
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: (data: { email: string; captchaToken: string }) => userApi.forgotPassword(data),
+  });
+};
+
+// Verify token for reset password (query, not mutation)
+export const useVerifyTokenResetPassword = (token: string | null) => {
+  return useQuery({
+    queryKey: ['reset-password-token', token],
+    queryFn: () => userApi.verifyTokenResetPassword(token!),
+    enabled: !!token && token.length === 64,
+    retry: false,
+  });
+};
+
+// Reset password mutation
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: (data: { token: string; newPassword: string; captchaToken: string }) =>
+      userApi.resetPassword(data),
+  });
+};

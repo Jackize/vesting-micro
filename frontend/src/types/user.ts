@@ -25,6 +25,7 @@ export interface RegisterInput {
 export interface LoginInput {
   email: string;
   password: string;
+  captchaToken?: string;
 }
 
 export interface UpdateProfileInput {

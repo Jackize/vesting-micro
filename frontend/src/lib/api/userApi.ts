@@ -83,4 +83,29 @@ export const userApi = {
     const response = await apiClient.put('/users/change-password', data);
     return response.data;
   },
+
+  // Forgot password
+  forgotPassword: async (data: {
+    email: string;
+    captchaToken: string;
+  }): Promise<{ success: true; message: string }> => {
+    const response = await apiClient.post('/users/forgot-password', data);
+    return response.data;
+  },
+
+  // Verify token for reset password
+  verifyTokenResetPassword: async (token: string): Promise<{ success: true; message: string }> => {
+    const response = await apiClient.get(`/users/reset-password?token=${token}`);
+    return response.data;
+  },
+
+  // Reset password with token
+  resetPassword: async (data: {
+    token: string;
+    newPassword: string;
+    captchaToken: string;
+  }): Promise<{ success: true; message: string }> => {
+    const response = await apiClient.post('/users/reset-password', data);
+    return response.data;
+  },
 };

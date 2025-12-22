@@ -9,12 +9,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useForm } from 'react-hook-form';
 
 export default function LoginPage() {
   const router = useRouter();
   const loginMutation = useLogin();
   const [error, setError] = useState<string | null>(null);
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const {
     register,
@@ -28,7 +30,17 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      if (!executeRecaptcha) {
+        setError('Captcha is not loaded');
+        return;
+      }
+      const captchaToken = await executeRecaptcha('login');
+      if (!captchaToken) {
+        setError('Captcha token is required');
+        return;
+      }
       setError(null);
+      data.captchaToken = captchaToken;
       // This will trigger refetch of current user data in the mutation's onSuccess
       await loginMutation.mutateAsync(data);
       // Navigate to profile - useCurrentUser will have fresh data due to refetchOnMount
@@ -84,7 +96,15 @@ export default function LoginPage() {
               )}
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"
