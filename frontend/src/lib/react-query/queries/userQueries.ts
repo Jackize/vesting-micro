@@ -10,6 +10,7 @@ export const userKeys = {
   current: () => [...userKeys.all, 'current'] as const,
   detail: (id: string) => [...userKeys.all, 'detail', id] as const,
   list: (filters?: Record<string, unknown>) => [...userKeys.all, 'list', filters] as const,
+  sessions: () => [...userKeys.all, 'sessions'] as const,
 };
 
 // Get current user
@@ -78,9 +79,10 @@ export const useLogin = () => {
     onSuccess: async (data) => {
       setUser(data.user);
       setToken(data.accessToken);
-      // Save token to cookie
+      // Save token and sessionId to cookie
       Cookies.set('auth_token', data.accessToken, { expires: 7 }); // 7 days
       Cookies.set('refresh_token', data.refreshToken, { expires: 7 }); // 7 days
+      Cookies.set('session_id', data.sessionId, { expires: 7 }); // 7 days
       // Invalidate and refetch current user to get full data from API
       // This ensures we get all fields (phone, isActive, etc.)
       await queryClient.invalidateQueries({ queryKey: userKeys.current() });
@@ -162,5 +164,45 @@ export const useResetPassword = () => {
   return useMutation({
     mutationFn: (data: { token: string; newPassword: string; captchaToken: string }) =>
       userApi.resetPassword(data),
+  });
+};
+
+// Get user sessions with polling to detect when current session is logged out
+export const useUserSessions = (options?: { refetchInterval?: number }) => {
+  const refreshToken = Cookies.get('refresh_token');
+
+  return useQuery({
+    queryKey: userKeys.sessions(),
+    queryFn: () => userApi.getUserSessions({ refreshToken: refreshToken || '' }),
+    enabled: !!Cookies.get('auth_token') && !!refreshToken,
+    // Poll every 3-5 seconds to check if current session still exists
+    refetchInterval: options?.refetchInterval ?? 3000,
+    refetchIntervalInBackground: true,
+  });
+};
+
+// Logout mutation
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const logout = useAuthStore((state) => state.logout);
+
+  return useMutation({
+    mutationFn: (data?: { sessionId?: string; refreshToken?: string }) =>
+      userApi.logout(data || {}),
+    onSuccess: (_, variables) => {
+      // If logging out current session or all sessions, clear everything
+      if (!variables?.sessionId || variables.sessionId === 'all') {
+        // Clear tokens and cookies
+        Cookies.remove('auth_token');
+        Cookies.remove('refresh_token');
+        // Clear all queries
+        queryClient.clear();
+        // Logout from store
+        logout();
+      } else {
+        // Just invalidate sessions query to refresh the list
+        queryClient.invalidateQueries({ queryKey: userKeys.sessions() });
+      }
+    },
   });
 };

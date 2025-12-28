@@ -28,6 +28,19 @@ export interface LoginInput {
   captchaToken?: string;
 }
 
+export interface Session {
+  sessionId: string;
+  deviceInfo: {
+    userAgent?: string;
+    platform?: string;
+    ip?: string;
+  };
+  lastUsedAt?: string;
+  createdAt: string;
+  expiresAt: string;
+  isCurrent?: boolean;
+}
+
 export interface UpdateProfileInput {
   firstName?: string;
   lastName?: string;

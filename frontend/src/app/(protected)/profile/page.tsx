@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import {
   useChangePassword,
   useCurrentUser,
+  useLogout,
   useUpdateProfile,
 } from '@/lib/react-query/queries/userQueries';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -16,17 +17,20 @@ import {
   type UpdateProfileFormData,
 } from '@/lib/validations/userSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import SessionList from './SessionList';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { data: user, isLoading, isError } = useCurrentUser();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
-  const logout = useAuthStore((state) => state.logout);
-  const [error, setError] = useState<string | null>(null);
+  const logoutMutation = useLogout();
+  const error = useAuthStore((state) => state.error);
+  const setError = useAuthStore((state) => state.setError);
   const [success, setSuccess] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
@@ -88,10 +92,38 @@ export default function ProfilePage() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
+  const handleLogout = useCallback(
+    async (type: 'current' | 'all' | string) => {
+      try {
+        setError(null);
+        const refreshToken = Cookies.get('refresh_token');
+
+        if (type === 'all') {
+          await logoutMutation.mutateAsync({ sessionId: 'all' });
+        } else if (type === 'current') {
+          await logoutMutation.mutateAsync({ refreshToken });
+        } else {
+          // Logout specific session
+          await logoutMutation.mutateAsync({ sessionId: type });
+        }
+
+        // If logging out current session or all sessions, redirect to login
+        if (type === 'current' || type === 'all') {
+          router.push('/login');
+        } else {
+          // Just refresh sessions list
+          // The mutation will handle query invalidation
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || 'Failed to logout. Please try again.');
+        } else {
+          setError('An unexpected error occurred');
+        }
+      }
+    },
+    [logoutMutation, router, setError]
+  );
 
   const onPasswordSubmit = async (data: ChangePasswordFormData) => {
     try {
@@ -135,7 +167,7 @@ export default function ProfilePage() {
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Profile</h1>
-          <Button variant="outline" onClick={handleLogout}>
+          <Button variant="outline" onClick={() => handleLogout('current')}>
             Logout
           </Button>
         </div>
@@ -294,6 +326,9 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
+
+        {/* Session List */}
+        <SessionList handleLogout={handleLogout} />
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import {
   ChangePasswordInput,
   LoginInput,
   RegisterInput,
+  Session,
   UpdateProfileInput,
   User,
   UserListResponse,
@@ -20,7 +21,7 @@ export const userApi = {
   // Login
   login: async (
     data: LoginInput
-  ): Promise<{ user: User; accessToken: string; refreshToken: string }> => {
+  ): Promise<{ user: User; accessToken: string; refreshToken: string; sessionId: string }> => {
     const response = await apiClient.post('/users/login', data);
     return response.data.data;
   },
@@ -106,6 +107,21 @@ export const userApi = {
     captchaToken: string;
   }): Promise<{ success: true; message: string }> => {
     const response = await apiClient.post('/users/reset-password', data);
+    return response.data;
+  },
+
+  // Get user sessions
+  getUserSessions: async (data: { refreshToken: string }): Promise<{ sessions: Session[] }> => {
+    const response = await apiClient.get('/users/sessions', { params: data });
+    return response.data.data;
+  },
+
+  // Logout
+  logout: async (data: {
+    sessionId?: string;
+    refreshToken?: string;
+  }): Promise<{ success: true; message: string }> => {
+    const response = await apiClient.post('/users/logout', data);
     return response.data;
   },
 };
