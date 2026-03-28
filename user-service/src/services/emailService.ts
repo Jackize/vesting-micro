@@ -1,10 +1,3 @@
-import { DeviceInfo } from "../utils/deviceInfo";
-
-/**
- * Email service for sending emails
- * TODO: Integrate with jobs-service email queue via RabbitMQ
- * For now, this is a placeholder that logs email details
- */
 export interface EmailData {
   to: string;
   subject: string;
@@ -13,31 +6,11 @@ export interface EmailData {
 }
 
 export class EmailService {
-  /**
-   * Send email (placeholder - integrate with jobs-service later)
-   */
   static async sendEmail(data: EmailData): Promise<void> {
     // TODO: Publish email event to RabbitMQ for jobs-service to process
-    // For now, just log the email details
-    console.log("📧 Email to be sent:", {
-      to: data.to,
-      subject: data.subject,
-      // Don't log full HTML body for security
-    });
-
-    // In production, this would publish to RabbitMQ:
-    // const publisher = new EmailRequestedPublisher(rabbitWrapper.channel);
-    // await publisher.publish({
-    //   to: data.to,
-    //   subject: data.subject,
-    //   body: data.html,
-    //   type: 'transactional',
-    // });
+    console.log("Email to be sent:", { to: data.to, subject: data.subject });
   }
 
-  /**
-   * Send email verification email
-   */
   static async sendVerificationEmail(
     email: string,
     token: string,
@@ -65,26 +38,12 @@ export class EmailService {
             <p style="word-break: break-all; color: #666;">${verificationUrl}</p>
             <p>This link will expire in 24 hours.</p>
             <p>If you didn't create an account, please ignore this email.</p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-            <p style="font-size: 12px; color: #999;">This is an automated message, please do not reply.</p>
           </div>
         </body>
       </html>
     `;
 
-    const text = `
-      Verify Your Email Address
-
-      Hi ${firstName},
-
-      Thank you for registering! Please verify your email address by visiting this link:
-
-      ${verificationUrl}
-
-      This link will expire in 5 minutes.
-
-      If you didn't create an account, please ignore this email.
-    `;
+    const text = `Hi ${firstName}, verify your email: ${verificationUrl} (expires in 24 hours)`;
 
     await this.sendEmail({
       to: email,
@@ -94,9 +53,6 @@ export class EmailService {
     });
   }
 
-  /**
-   * Send password reset email
-   */
   static async sendPasswordResetEmail(
     email: string,
     token: string,
@@ -122,121 +78,18 @@ export class EmailService {
             </div>
             <p>Or copy and paste this link into your browser:</p>
             <p style="word-break: break-all; color: #666;">${resetUrl}</p>
-            <p>This link will expire in 5 minutes.</p>
+            <p>This link will expire in 24 hours.</p>
             <p>If you didn't request a password reset, please ignore this email.</p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-            <p style="font-size: 12px; color: #999;">This is an automated message, please do not reply.</p>
           </div>
         </body>
       </html>
     `;
 
-    const text = `
-      Reset Your Password
-
-      Hi ${firstName},
-
-      We received a request to reset your password. Visit this link to reset it:
-
-      ${resetUrl}
-
-      This link will expire in 5 minutes.
-
-      If you didn't request a password reset, please ignore this email.
-    `;
+    const text = `Hi ${firstName}, reset your password: ${resetUrl} (expires in 24 hours)`;
 
     await this.sendEmail({
       to: email,
       subject: "Reset Your Password",
-      html,
-      text,
-    });
-  }
-
-  /**
-   * Send password reset email
-   */
-  static async sendPasswordResetSuccessEmail(
-    email: string,
-    firstName: string,
-  ): Promise<void> {
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Password Reset Success</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #4CAF50;">Password Reset Success</h1>
-            <p>Hi ${firstName},</p>
-            <p>Your password has been reset successfully.</p>
-          </div>
-        </body>
-      </html>
-    `;
-
-    const text = `
-      Password Reset Success
-
-      Hi ${firstName},
-
-      Your password has been reset successfully.
-    `;
-
-    await this.sendEmail({
-      to: email,
-      subject: "Password Reset Success",
-      html,
-      text,
-    });
-  }
-
-  /**
-   * Send change password success email
-   */
-  static async sendChangePasswordSuccessEmail(
-    email: string,
-    firstName: string,
-    device: DeviceInfo,
-  ): Promise<void> {
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Change Password Success</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-          <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #4CAF50;">Change Password Success</h1>
-            <p>Hi ${firstName},</p>
-            <p>Your password has been changed successfully.</p>
-            <p>Device: ${device.deviceType}</p>
-            <p>IP Address: ${device.ip}</p>
-            <p>User Agent: ${device.userAgent}</p>
-          </div>
-        </body>
-      </html>
-    `;
-
-    const text = `
-      Change Password Success
-
-      Hi ${firstName},
-
-      Your password has been changed successfully.
-      Device: ${device.deviceType}
-      IP Address: ${device.ip}
-      User Agent: ${device.userAgent}
-    `;
-
-    await this.sendEmail({
-      to: email,
-      subject: "Change Password Success",
       html,
       text,
     });

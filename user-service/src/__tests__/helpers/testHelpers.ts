@@ -3,6 +3,7 @@ import request from "supertest";
 import app from "../../app";
 import User, { IUser } from "../../models/User";
 import { generateAccessToken } from "../../utils/jwt";
+
 export const createTestUser = async (userData?: {
   email?: string;
   password?: string;
@@ -61,22 +62,9 @@ export const invalidObjectId = (): string => {
 export const loginUser = async (
   email: string,
   password: string,
-  captchaToken?: string,
-  userAgent?: string,
-  ip?: string,
 ): Promise<any> => {
   const response = await request(app)
     .post("/api/users/login")
-    .set(
-      "User-Agent",
-      userAgent ||
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    )
-    .set("X-Forwarded-For", ip || "127.0.0.1")
-    .send({
-      email,
-      password,
-      captchaToken: captchaToken || "1234567890",
-    });
+    .send({ email, password });
   return response;
 };

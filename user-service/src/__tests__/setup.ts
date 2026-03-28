@@ -13,7 +13,6 @@ process.env.JWT_REFRESH_EXPIRES_IN =
 process.env.CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 
 let mongoServer: MongoMemoryServer;
-jest.mock("../config/redis");
 
 // Setup before all tests
 beforeAll(async () => {

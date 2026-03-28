@@ -1,308 +1,202 @@
 # User Service
 
-A microservice for managing users in the Vestify e-commerce platform. Built with Express, TypeScript, and MongoDB.
-
-## Features
-
-- ✅ User registration and authentication
-- ✅ JWT-based authentication
-- ✅ User profile management
-- ✅ Role-based access control (RBAC)
-- ✅ MongoDB integration with Mongoose
-- ✅ Comprehensive error handling
-- ✅ TypeScript for type safety
-- ✅ Docker support with pnpm
-- ✅ Development and production modes
+Authentication and user management microservice for the Vestify e-commerce platform.
 
 ## Tech Stack
 
-- **Runtime**: Node.js 20+
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **Database**: MongoDB with Mongoose
+- **Runtime**: Node.js 18+
+- **Framework**: Express.js + TypeScript
+- **Database**: MongoDB (Mongoose)
+- **Auth**: JWT access tokens (15 min) + opaque refresh tokens stored in MongoDB (7 days)
 - **Package Manager**: pnpm
-- **Authentication**: JWT (JSON Web Tokens)
 
 ## Prerequisites
 
 - Node.js >= 18.0.0
 - pnpm >= 8.0.0
-- MongoDB (local or remote)
+- MongoDB
 
-## Installation
+## Setup
 
 ```bash
-# Install dependencies
 pnpm install
 ```
 
-## Configuration
-
-Create a `.env` file in the root directory:
+Create a `.env` file:
 
 ```env
 NODE_ENV=development
 PORT=3001
 
-MONGODB_URI=mongodb://localhost:27017/vestify_users
+MONGODB_URI=mongodb://localhost:27017
 MONGODB_DB_NAME=vestify_users
 
-JWT_SECRET=your-super-secret-jwt-key-change-in-production
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-in-production
-JWT_REFRESH_EXPIRES_IN=30d
+JWT_SECRET=your-secret-key
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
 
 CORS_ORIGIN=http://localhost:3000
+FRONTEND_URL=http://localhost:3000
 
-# Default Admin User (optional - only used if no admin users exist)
+# Default admin seeded on first startup (optional)
 DEFAULT_ADMIN_EMAIL=admin@vestify.com
 DEFAULT_ADMIN_PASSWORD=Admin123!
 DEFAULT_ADMIN_FIRST_NAME=Admin
 DEFAULT_ADMIN_LAST_NAME=User
-DEFAULT_ADMIN_PHONE=+1234567890
 ```
 
-### Default Admin User
+## Commands
 
-On first startup, if no admin users exist in the database, the service will automatically create a default admin user with the following credentials:
-
-- **Email**: `admin@vestify.com` (configurable via `DEFAULT_ADMIN_EMAIL`)
-- **Password**: `Admin123!` (configurable via `DEFAULT_ADMIN_PASSWORD`)
-- **Role**: `admin`
-- **Name**: Admin User (configurable via `DEFAULT_ADMIN_FIRST_NAME` and `DEFAULT_ADMIN_LAST_NAME`)
-
-**⚠️ Important Security Notes:**
-
-1. **Change the default password immediately** after first login in production
-2. The default admin is only created if no admin users exist
-3. If a user with the default email already exists, their role will be updated to admin
-4. All default admin settings are optional and have sensible defaults
-
-**Example:**
 ```bash
-# Custom default admin
-DEFAULT_ADMIN_EMAIL=admin@mycompany.com
-DEFAULT_ADMIN_PASSWORD=YourSecurePassword123!
-DEFAULT_ADMIN_FIRST_NAME=System
-DEFAULT_ADMIN_LAST_NAME=Administrator
+pnpm dev            # dev server with hot reload
+pnpm build          # compile TypeScript → dist/
+pnpm start          # run compiled build
+pnpm test           # run tests (in-memory MongoDB, no external deps)
+pnpm test:watch     # watch mode
+pnpm test:coverage  # with coverage report
+pnpm lint           # ESLint
+pnpm format         # Prettier
 ```
 
-## Development
+## API Documentation
 
-```bash
-# Run in development mode with hot reload
-pnpm dev
+Swagger UI is available at **`/api/docs`** when the server is running.
+Raw OpenAPI JSON is at **`/api/docs.json`** — import this URL directly into Postman.
+
+## Endpoints
+
+### Auth
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/users/register` | — | Create account, sends verification email |
+| POST | `/api/users/login` | — | Returns `accessToken` + `refreshToken` |
+| POST | `/api/users/refresh` | — | Exchange refresh token for new access token |
+| POST | `/api/users/logout` | Bearer | Delete refresh token (body: `{ refreshToken }`) |
+
+### Email Verification
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/users/verify-email?token=` | — | Activate account via emailed token |
+| POST | `/api/users/resend-verification` | — | Resend verification email (5-min cooldown) |
+
+### Password
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/api/users/forgot-password` | — | Send reset link (always returns 200) |
+| GET | `/api/users/reset-password?token=` | — | Validate reset token before showing form |
+| POST | `/api/users/reset-password` | — | Set new password, invalidates all sessions |
+| PUT | `/api/users/change-password` | Bearer | Change password while logged in |
+
+### Profile
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/users/me` | Bearer | Get current user profile |
+| PUT | `/api/users/me` | Bearer | Update `firstName`, `lastName`, `phone`, `avatar` |
+
+### Admin
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/api/users` | Bearer (admin/moderator) | List users — supports `?page`, `?limit`, `?role`, `?isActive` |
+| GET | `/api/users/:id` | Bearer | Get user by ID |
+| DELETE | `/api/users/:id` | Bearer (admin) | Delete user |
+| PUT | `/api/users/:id/role` | Bearer (admin) | Change user role |
+
+### Health
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/health` | Service liveness |
+| GET | `/api/users/health` | Route-level health |
+
+## Auth Flow
+
+```
+1. POST /register  →  account created (inactive), verification email sent
+2. GET  /verify-email?token=  →  account activated
+3. POST /login  →  { accessToken, refreshToken }
+4. Use accessToken in:  Authorization: Bearer <token>
+5. POST /refresh  →  new accessToken when old one expires
+6. POST /logout  →  refresh token deleted from DB
 ```
 
-The server will start on `http://localhost:3001`
+## Response Format
 
-## Production Build
+All responses follow a consistent envelope:
 
-```bash
-# Build TypeScript to JavaScript
-pnpm build
+```json
+// Success
+{ "success": true, "message": "...", "data": { ... } }
 
-# Start production server
-pnpm start
-```
+// Error
+{ "success": false, "error": "..." }
 
-## Docker
-
-### Development Mode
-
-```bash
-# Build and run in development mode
-BUILD_TARGET=development docker-compose up --build
-
-# Or using docker-compose
-docker-compose -f docker-compose.yml up --build
-```
-
-### Production Mode
-
-```bash
-# Build and run in production mode
-BUILD_TARGET=production docker-compose up --build
-```
-
-## API Endpoints
-
-### Public Routes
-
-- `POST /api/users/register` - Register a new user
-- `POST /api/users/login` - Login user
-
-### Protected Routes
-
-- `GET /api/users/me` - Get current user profile
-- `PUT /api/users/me` - Update current user profile
-- `GET /api/users/:id` - Get user by ID
-
-### Admin Routes
-
-- `GET /api/users` - Get all users (with pagination)
-- `DELETE /api/users/:id` - Delete user (admin only)
-
-### Health Check
-
-- `GET /health` - Service health check
-- `GET /` - API information
-
-## Example Requests
-
-### Register User
-
-```bash
-curl -X POST http://localhost:3001/api/users/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "password123",
-    "firstName": "John",
-    "lastName": "Doe",
-    "phone": "+1234567890"
-  }'
-```
-
-### Login
-
-```bash
-curl -X POST http://localhost:3001/api/users/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "password123"
-  }'
-```
-
-### Get Current User (Protected)
-
-```bash
-curl -X GET http://localhost:3001/api/users/me \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+// Validation error
+{ "success": false, "errors": [{ "field": "email", "message": "..." }] }
 ```
 
 ## User Model
 
 ```typescript
 {
-  email: string;
-  password: string (hashed);
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  avatar?: string;
-  role: 'user' | 'admin' | 'moderator';
-  isEmailVerified: boolean;
-  isActive: boolean;
-  lastLogin?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  email: string           // unique, lowercase
+  password: string        // bcrypt-hashed, never returned in responses
+  firstName: string
+  lastName: string
+  phone?: string
+  avatar?: string
+  role: 'user' | 'admin' | 'moderator'
+  isEmailVerified: boolean
+  isActive: boolean       // set to true on email verification
+  lastLogin?: Date
+  createdAt: Date
+  updatedAt: Date
 }
 ```
 
-## Error Handling
+## Default Admin
 
-The service includes comprehensive error handling:
-
-- 400: Bad Request (validation errors, duplicate entries)
-- 401: Unauthorized (missing/invalid token)
-- 403: Forbidden (insufficient permissions, deactivated account)
-- 404: Not Found (user/resource not found)
-- 500: Internal Server Error
-
-All errors follow this format:
-
-```json
-{
-  "success": false,
-  "error": "Error message",
-  "stack": "Error stack (development only)"
-}
-```
+On first startup, if no admin user exists in the database, one is created using `DEFAULT_ADMIN_*` env vars (defaults to `admin@vestify.com` / `Admin123!`). Change the password immediately after first login in production.
 
 ## Project Structure
 
 ```
-user-service/
-├── src/
-│   ├── config/
-│   │   └── database.ts          # MongoDB connection
-│   ├── controllers/
-│   │   └── userController.ts    # User route handlers
-│   ├── middleware/
-│   │   ├── auth.ts              # Authentication & authorization
-│   │   └── errorHandler.ts      # Error handling middleware
-│   ├── models/
-│   │   └── User.ts              # User Mongoose model
-│   ├── routes/
-│   │   └── userRoutes.ts        # User routes
-│   ├── scripts/
-│   │   └── seedDefaultAdmin.ts  # Default admin user seeding
-│   └── server.ts                # Express app & server
-├── dist/                         # Compiled JavaScript (build output)
-├── Dockerfile                    # Docker configuration
-├── docker-compose.yml           # Docker Compose configuration
-├── package.json
-├── tsconfig.json
-└── README.md
+src/
+├── config/
+│   ├── database.ts          # MongoDB connection singleton
+│   └── swagger.ts           # OpenAPI 3.0 spec
+├── controllers/
+│   ├── registerController.ts
+│   ├── loginController.ts
+│   ├── logoutController.ts
+│   ├── refreshController.ts
+│   ├── emailVerificationController.ts
+│   ├── passwordResetController.ts
+│   ├── changePasswordController.ts
+│   ├── profileController.ts
+│   ├── userController.ts
+│   └── updateUserRole.ts
+├── middleware/
+│   ├── auth.ts              # Re-exports currentUser from @vestify/shared
+│   └── validator.ts         # express-validator chains
+├── models/
+│   ├── User.ts
+│   ├── RefreshToken.ts
+│   ├── EmailVerificationToken.ts
+│   ├── PasswordResetToken.ts
+│   └── plugin/findByIdOrThrow.plugin.ts
+├── routes/
+│   └── userRoutes.ts
+├── scripts/
+│   └── seedDefaultAdmin.ts
+├── services/
+│   └── emailService.ts      # Email templates (logs to console; TODO: publish to jobs-service)
+├── utils/
+│   └── jwt.ts
+├── app.ts
+└── server.ts
 ```
-
-## Security Features
-
-- Password hashing with bcrypt
-- JWT token authentication
-- Helmet.js for security headers
-- CORS configuration
-- Input validation
-- Role-based access control (RBAC)
-
-## Testing
-
-The project uses Jest and Supertest for testing.
-
-### Setup
-
-No setup required! Tests automatically use mock environment variables and `mongodb-memory-server` for an in-memory MongoDB instance.
-
-**Note:** 
-- Tests use `mongodb-memory-server` which creates an in-memory MongoDB instance
-- No external MongoDB server is required for testing
-- Test environment variables are set automatically in the test setup
-
-### Run Tests
-
-```bash
-# Run all tests
-pnpm test
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Run tests with coverage
-pnpm test:coverage
-```
-
-### Test Structure
-
-- `src/__tests__/setup.ts` - Test setup and database connection
-- `src/__tests__/helpers/testHelpers.ts` - Test utility functions
-- `src/__tests__/routes/` - Route test files
-  - `appRoutes.test.ts` - Health check and root endpoint tests
-  - `userRoutes.test.ts` - All user route tests
-
-### Test Coverage
-
-Tests cover:
-- ✅ User registration (success, validation, duplicates)
-- ✅ User login (success, invalid credentials, inactive users)
-- ✅ Protected routes (authentication, authorization)
-- ✅ User profile management (get, update)
-- ✅ Admin routes (get all users, delete users)
-- ✅ Pagination and filtering
-- ✅ Error handling (404, 401, 403, 400)
-
-## License
-
-MIT
-

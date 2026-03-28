@@ -1,4 +1,4 @@
-import { CustomError } from "@vestify/shared";
+import { CustomError, ResponseError, ResponseSuccess } from "@vestify/shared";
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import RefreshToken from "../models/RefreshToken";
@@ -14,7 +14,7 @@ export const refreshAccessToken = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<ResponseSuccess<{ accessToken: string }> | ResponseError | void> => {
   try {
     const { refreshToken } = req.body;
 

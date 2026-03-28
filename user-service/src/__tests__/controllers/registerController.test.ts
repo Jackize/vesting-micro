@@ -1,7 +1,6 @@
 import request from "supertest";
 import app from "../../app";
 
-jest.mock("../../middleware/captcha");
 describe("Register Controller", () => {
   describe("POST /api/users/register", () => {
     it("should register a new user successfully", async () => {
@@ -10,7 +9,6 @@ describe("Register Controller", () => {
         password: "Password123",
         firstName: "John",
         lastName: "Doe",
-        captchaToken: "1234567890",
       };
 
       const response = await request(app)
@@ -40,10 +38,8 @@ describe("Register Controller", () => {
         lastName: "Doe",
       };
 
-      // First registration
       await request(app).post("/api/users/register").send(userData).expect(201);
 
-      // Second registration with same email
       const response = await request(app)
         .post("/api/users/register")
         .send(userData)
@@ -56,10 +52,7 @@ describe("Register Controller", () => {
     it("should validate required fields", async () => {
       const response = await request(app)
         .post("/api/users/register")
-        .send({
-          email: "invalid-email",
-          password: "123", // too short
-        })
+        .send({ email: "invalid-email", password: "123" })
         .expect(400);
 
       expect(response.body.success).toBe(false);
@@ -96,10 +89,7 @@ describe("Register Controller", () => {
     it("should validate firstName and lastName", async () => {
       const response = await request(app)
         .post("/api/users/register")
-        .send({
-          email: "test@example.com",
-          password: "password123",
-        })
+        .send({ email: "test@example.com", password: "password123" })
         .expect(400);
 
       expect(response.body.success).toBe(false);
